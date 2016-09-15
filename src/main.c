@@ -1,5 +1,6 @@
 // Main function
 #include <stdio.h>
+#include <stdlib.h>
 
 // Struct definitions
 
@@ -18,31 +19,35 @@ struct geometry
 };
 
 // Declarations
-void geometry_print(struct geometry);
+void geometry_print(struct geometry *geom);
 
 int main(void)
 {
    // Define structs
    struct geometry grid;
+   struct geometry *grid_ptr;
+
+   // Allocate memory
+   grid_ptr = malloc(sizeof(struct geometry));
 
    // Initialize
-   grid.x_min = 0.0;
-   grid.x_max = 1.0;
-   grid.y_min = 0.0;
-   grid.y_max = 1.5;
+   grid_ptr->x_min = 0.0;
+   grid_ptr->x_max = 1.0;
+   grid_ptr->y_min = 0.0;
+   grid_ptr->y_max = 1.5;
 
-   grid.nx = 10;
-   grid.ny =  6;
+   grid_ptr->nx = 10;
+   grid_ptr->ny =  6;
 
    // Print structure contents
-   geometry_print(grid);
+   geometry_print(grid_ptr);
 
 }
 
-void geometry_print(struct geometry geom_info)
+void geometry_print(struct geometry *geom)
 {
   printf("\nGrid dimensions\n---------------\n"); 
-  printf("   (x_min, x_max) = (%f, %f)\n", geom_info.x_min, geom_info.x_max); 
-  printf("   (y_min, y_max) = (%f, %f)\n", geom_info.y_min, geom_info.y_max); 
+  printf("   (x_min, x_max) = (%f, %f)\n", geom->x_min, geom->x_max); 
+  printf("   (y_min, y_max) = (%f, %f)\n", geom->y_min, geom->y_max); 
 
 }
