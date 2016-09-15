@@ -39,8 +39,33 @@ int main(void)
    grid_ptr->nx = 10;
    grid_ptr->ny =  6;
 
+   // Define grid arrays and variables
+   int np;
+   float dx, dy;
+   float x_loc[grid_ptr->nx];
+   float y_loc[grid_ptr->ny];
+   int ii;
+   
+   np = grid_ptr->nx*grid_ptr->ny;
+   dx = (grid_ptr->x_max - grid_ptr->x_min)/grid_ptr->nx;
+   dy = (grid_ptr->y_max - grid_ptr->y_min)/grid_ptr->ny;
+
+   printf("--- x Cell Centers ---\n");
+   for(ii = 0; ii < grid_ptr->nx; ii++)
+   {
+      x_loc[ii] = (ii + 0.5)*dx;
+      printf("%f\n",x_loc[ii]);
+   }
+   printf("--- y Cell Centers ---\n");
+   for(ii = 0; ii < grid_ptr->ny; ii++)
+   {
+      y_loc[ii] = (ii + 0.5)*dy;
+      printf("%f\n",y_loc[ii]);
+   }
    // Print structure contents
    geometry_print(grid_ptr);
+
+   // Set up the grid
 
 }
 
