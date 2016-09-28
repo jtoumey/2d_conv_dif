@@ -1,9 +1,5 @@
 #include <stdio.h>
-struct cell
-{
-   float x, y, z;
-   float phi;
-};
+#include "struct_list.h"
 
 void calc_fvm_coefficients(struct cell *cell_data)
 {

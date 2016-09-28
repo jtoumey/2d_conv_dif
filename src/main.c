@@ -1,16 +1,8 @@
 // Main function
 #include <stdio.h>
 #include <stdlib.h>
+#include "struct_list.h"
 
-
-// Struct definitions
-
-// Geometry structure: domain size, number of 
-struct cell
-{
-   float x, y, z;
-   float phi;
-};
 
 // Declarations of function prototypes
 void calc_fvm_coefficients(struct cell *cell_data);
