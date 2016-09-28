@@ -11,34 +11,29 @@ void calc_fvm_coefficients(struct cell *cell_data);
 // Main driver function
 int main(void)
 {
-   int np = 12;
-   int nx = 4;
-   int ny = 3;
-   float x_max, y_max;
    int ii, jj, kk;
-   float dx, dy;
 
    // Define structs
    struct cell *cell_data;
+   struct block *grid_data;
+
+   grid_data = (struct block *)malloc(sizeof(struct block));
+   // Enter inputs (replace with file parser later)
+   grid_data->nx = 4;
+   grid_data->ny = 3;
+   grid_data->np = grid_data->nx*grid_data->ny;
+
+   grid_data->xmin = 0.0;
+   grid_data->xmax = 1.0;
+   grid_data->ymin = 0.0;
+   grid_data->ymax = 0.6;
 
    // Allocate memory
-   cell_data = (struct cell *)malloc(np * sizeof(struct cell));
+   cell_data = (struct cell *)malloc(grid_data->np * sizeof(struct cell));
 
-   // Calculate grid
-   x_max = 1.0;
-   y_max = 0.6; 
-   dx = x_max/nx;
-   dy = y_max/ny;
-   for(ii = 0; ii < nx; ii++)
-   {
-      for(jj = 0; jj < ny; jj++)
-      {
-         kk = ii*ny + jj;
-         cell_data[kk].x = (ii + 0.5)*dx;
-         cell_data[kk].y = (jj + 0.5)*dy;
-      }
-   }
-   for(ii = 0; ii < np; ii++)
+   calc_grid(grid_data, cell_data);
+
+   for(ii = 0; ii < grid_data->np; ii++)
    {
       printf("(%f, %f)\n",cell_data[ii].x, cell_data[ii].y);
    }
