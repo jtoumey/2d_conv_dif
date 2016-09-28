@@ -2,77 +2,56 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 // Struct definitions
 
 // Geometry structure: domain size, number of 
-struct geometry
+struct cell
 {
-   // Geometry bounds
-   float x_min;
-   float x_max; 
-   float y_min;
-   float y_max;
-
-   // Grid spacing
-   int nx;
-   int ny;
+   float x, y, z;
+   float phi;
 };
 
-// Declarations
-void geometry_print(struct geometry *geom);
+// Declarations of function prototypes
+void calc_fvm_coefficients(struct cell *cell_data);
 
+
+// Main driver function
 int main(void)
 {
+   int np = 12;
+   int nx = 4;
+   int ny = 3;
+   float x_max, y_max;
+   int ii, jj, kk;
+   float dx, dy;
+
    // Define structs
-   struct geometry grid;
-   struct geometry *grid_ptr;
+   struct cell *cell_data;
 
    // Allocate memory
-   grid_ptr = malloc(sizeof(struct geometry));
+   cell_data = (struct cell *)malloc(np * sizeof(struct cell));
 
-   // Initialize
-   grid_ptr->x_min = 0.0;
-   grid_ptr->x_max = 1.0;
-   grid_ptr->y_min = 0.0;
-   grid_ptr->y_max = 1.5;
-
-   grid_ptr->nx = 10;
-   grid_ptr->ny =  6;
-
-   // Define grid arrays and variables
-   int np;
-   float dx, dy;
-   float x_loc[grid_ptr->nx];
-   float y_loc[grid_ptr->ny];
-   int ii;
-   
-   np = grid_ptr->nx*grid_ptr->ny;
-   dx = (grid_ptr->x_max - grid_ptr->x_min)/grid_ptr->nx;
-   dy = (grid_ptr->y_max - grid_ptr->y_min)/grid_ptr->ny;
-
-   printf("--- x Cell Centers ---\n");
-   for(ii = 0; ii < grid_ptr->nx; ii++)
+   // Calculate grid
+   x_max = 1.0;
+   y_max = 0.6; 
+   dx = x_max/nx;
+   dy = y_max/ny;
+   for(ii = 0; ii < nx; ii++)
    {
-      x_loc[ii] = (ii + 0.5)*dx;
-      printf("%f\n",x_loc[ii]);
+      for(jj = 0; jj < ny; jj++)
+      {
+         kk = ii*ny + jj;
+         cell_data[kk].x = (ii + 0.5)*dx;
+         cell_data[kk].y = (jj + 0.5)*dy;
+      }
    }
-   printf("--- y Cell Centers ---\n");
-   for(ii = 0; ii < grid_ptr->ny; ii++)
+   for(ii = 0; ii < np; ii++)
    {
-      y_loc[ii] = (ii + 0.5)*dy;
-      printf("%f\n",y_loc[ii]);
+      printf("(%f, %f)\n",cell_data[ii].x, cell_data[ii].y);
    }
-   // Print structure contents
-   geometry_print(grid_ptr);
+//   calc_fvm_coefficients()
 
-   // Set up the grid
-
-}
-
-void geometry_print(struct geometry *geom)
-{
-  printf("\nGrid dimensions\n---------------\n"); 
-  printf("   (x_min, x_max) = (%f, %f)\n", geom->x_min, geom->x_max); 
-  printf("   (y_min, y_max) = (%f, %f)\n", geom->y_min, geom->y_max); 
-
+   calc_fvm_coefficients(cell_data);
+   return(0);
 }
