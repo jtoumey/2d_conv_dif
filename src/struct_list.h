@@ -7,3 +7,11 @@ struct cell
    float phi;
 };
 
+struct block
+{
+   int nx,ny,np;
+   float xmin, xmax;
+   float ymin, ymax;
+   // Calculated
+   float dx, dy;
+};

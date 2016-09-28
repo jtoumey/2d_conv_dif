@@ -5,8 +5,8 @@
 
 
 // Declarations of function prototypes
+void calc_grid(struct block *grid_data, struct cell *cell_data);
 void calc_fvm_coefficients(struct cell *cell_data);
-
 
 // Main driver function
 int main(void)
