@@ -6,7 +6,7 @@
 
 // Declarations of function prototypes
 void calc_grid(struct block *grid_data, struct cell *cell_data);
-void calc_fvm_coefficients(struct cell *cell_data);
+void calc_fvm_coefficients(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 
 // Main driver function
 int main(void)
@@ -16,8 +16,11 @@ int main(void)
    // Define structs
    struct cell *cell_data;
    struct block *grid_data;
+   struct coeff *fvm_coeff;
+   struct properties *phys_prop;
 
    grid_data = (struct block *)malloc(sizeof(struct block));
+   phys_prop = (struct properties *)malloc(sizeof(struct properties));
    // Enter inputs (replace with file parser later)
    grid_data->nx = 4;
    grid_data->ny = 3;
@@ -28,8 +31,19 @@ int main(void)
    grid_data->ymin = 0.0;
    grid_data->ymax = 0.6;
 
+   phys_prop->rho = 1.4;
+   phys_prop->gamma = 0.6;
+   phys_prop->u = 0.8;
+   phys_prop->v = 0.8;
+
+   phys_prop->Fx = phys_prop->rho*phys_prop->u;
+   phys_prop->Fy = phys_prop->rho*phys_prop->v;
+   phys_prop->Difx = phys_prop->gamma/grid_data->dx;
+   phys_prop->Dify = phys_prop->gamma/grid_data->dy;
+
    // Allocate memory
    cell_data = (struct cell *)malloc(grid_data->np * sizeof(struct cell));
+   fvm_coeff = (struct coeff *)malloc(grid_data->np * sizeof(struct coeff));
 
    calc_grid(grid_data, cell_data);
 
@@ -39,6 +53,6 @@ int main(void)
    }
 //   calc_fvm_coefficients()
 
-   calc_fvm_coefficients(cell_data);
+   calc_fvm_coefficients(grid_data, fvm_coeff, phys_prop);
    return(0);
 }
