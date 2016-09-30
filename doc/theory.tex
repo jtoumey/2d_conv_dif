@@ -4,33 +4,72 @@
 \usepackage{amsmath}
 
 
+% Custom command definitions
+\newcommand{\DA}[1]{D_{#1} A_{#1}}
+\newcommand{\FA}[1]{F_{#1} A_{#1}}
+
+\newcommand{\dby}[2]{\frac{\partial #1}{\partial #2}}
+
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+
+
+% Vector Calculus
+\newcommand{\divc}[1]{\mathrm{div}\!\left(#1\right)}
+\newcommand{\gradc}[1]{\mathrm{grad}\!\left(#1\right)}
+
+\title{Two-Dimensional Convection-Diffusion}
+\author{J.\ Toumey}
+\date{Fall 2016}
+
+
 \begin{document}
+\maketitle
+
+
+\section{Governing Equations}
+\textbf{Convection-Diffusion}
+\begin{equation}
+   \divc{\rho \mathbf{u} \phi} = \divc{\Gamma \, \mathrm{grad}\, \phi} + S_{\phi}
+\end{equation}
+\begin{equation}
+   \dby{\rho u \phi}{x} + \dby{\rho v \phi}{y} = \dby{}{x} \lp \Gamma \dby{\phi}{x} \rp + \dby{}{y} \lp \Gamma \dby{\phi}{y} \rp + S
+\end{equation}
+
+\textbf{Conservation of Momentum}
+
+\begin{equation}
+   \divc{\rho \mathbf{u}} = 0
+\end{equation}
+\begin{equation}
+   \dby{\rho u}{x} + \dby{\rho v}{y} = 0
+\end{equation}
 
 \section{Derivation of FVM Coefficents}
 The discretization of the governing equation follows the method of Versteeg \& Malalasekera.
 In the equation below, $\mathrm{nb}$ indicates a neighbor node. 
 
 \begin{equation}
-   a_P \phi_P = \sum a_{\mathrm{nb}} \phi_{\mathrm{nb}}
+   a_P \phi_P = \sum a_{\mathrm{nb}} \phi_{\mathrm{nb}} + S_u
 \end{equation}
 
 For the central coefficient $a_P$, we use equation \ref{eqn:ap} to determine the value after calculating all other coefficients.
 
 \begin{equation}
-   a_P = \sum a_{\mathrm{nb}} - S_u
+   a_P = \sum a_{\mathrm{nb}} + \lp F_e - F_w \rp + \lp F_n - F_s \rp - S_P
    \label{eqn:ap}
 \end{equation}
 
 For interior cells, we can calculate the coefficients via the following formulations.
 \begin{table}[!ht]
 \centering
-\begin{tabular}{|l|l|} \hline
-   $a_W$ & $D_w A_w + max\left[0,  F_w A_w\right]$ \\ \hline
-   $a_E$ & $D_e A_e + max\left[0, -F_e A_e\right]$ \\ \hline
-   $a_S$ & $D_s A_s + max\left[0,  F_s A_s\right]$ \\ \hline
+\begin{tabular}{|l|c|} \hline
+   $a_W$ & $\DA{w} + max\left[0,  \FA{w}\right]$ \\ \hline
+   $a_E$ & $\DA{e} + max\left[0, -\FA{e}\right]$ \\ \hline
+   $a_S$ & $\DA{s} + max\left[0,  \FA{s}\right]$ \\ \hline
    $a_N$ & $D_n A_n + max\left[0, -F_n A_n\right]$ \\ \hline
    $S_u$ & 0 \\ \hline
-   $S_p$ & 0 \\ \hline
+   $S_P$ & 0 \\ \hline
 \end{tabular}
 \end{table}
 
