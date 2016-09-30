@@ -1,0 +1,38 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+
+\begin{document}
+
+\section{Derivation of FVM Coefficents}
+The discretization of the governing equation follows the method of Versteeg \& Malalasekera.
+In the equation below, $\mathrm{nb}$ indicates a neighbor node. 
+
+\begin{equation}
+   a_P \phi_P = \sum a_{\mathrm{nb}} \phi_{\mathrm{nb}}
+\end{equation}
+
+For the central coefficient $a_P$, we use equation \ref{eqn:ap} to determine the value after calculating all other coefficients.
+
+\begin{equation}
+   a_P = \sum a_{\mathrm{nb}} - S_u
+   \label{eqn:ap}
+\end{equation}
+
+For interior cells, we can calculate the coefficients via the following formulations.
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|l|l|} \hline
+   $a_W$ & $D_w A_w + max\left[0,  F_w A_w\right]$ \\ \hline
+   $a_E$ & $D_e A_e + max\left[0, -F_e A_e\right]$ \\ \hline
+   $a_S$ & $D_s A_s + max\left[0,  F_s A_s\right]$ \\ \hline
+   $a_N$ & $D_n A_n + max\left[0, -F_n A_n\right]$ \\ \hline
+   $S_u$ & 0 \\ \hline
+   $S_p$ & 0 \\ \hline
+\end{tabular}
+\end{table}
+
+
+\end{document}
