@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include "struct_list.h"
+// Calculate the maximum of two inputs (C does not include this natively)
 #define max(X,Y) (((X) > (Y)) ? (X) : (Y))
 
 void calc_fvm_coefficients(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop)
 {
    int ii;
 
+   // Loop over all cells, including boundary cells, and set the FVM coefficients for each
+   // Additional routines overwrite the coefficient values at boundary cells
    for(ii = 0; ii < grid_data->np; ii++)
    {
       fvm_coeff[ii].a_W = phys_prop->Difx*phys_prop->Aw + max(0,  phys_prop->Fx*phys_prop->Aw);
