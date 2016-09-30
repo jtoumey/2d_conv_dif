@@ -19,6 +19,7 @@ int main(void)
    struct coeff *fvm_coeff;
    struct properties *phys_prop;
 
+
    grid_data = (struct block *)malloc(sizeof(struct block));
    phys_prop = (struct properties *)malloc(sizeof(struct properties));
    // Enter inputs (replace with file parser later)
@@ -30,6 +31,8 @@ int main(void)
    grid_data->xmax = 1.0;
    grid_data->ymin = 0.0;
    grid_data->ymax = 0.6;
+   grid_data->dx = (grid_data->xmax-grid_data->xmin)/grid_data->nx;
+   grid_data->dy = (grid_data->ymax-grid_data->ymin)/grid_data->ny;
 
    phys_prop->rho = 1.4;
    phys_prop->gamma = 0.6;
@@ -40,6 +43,11 @@ int main(void)
    phys_prop->Fy = phys_prop->rho*phys_prop->v;
    phys_prop->Difx = phys_prop->gamma/grid_data->dx;
    phys_prop->Dify = phys_prop->gamma/grid_data->dy;
+ 
+   phys_prop->Aw = grid_data->dy; 
+   phys_prop->Ae = grid_data->dy; 
+   phys_prop->As = grid_data->dx; 
+   phys_prop->An = grid_data->dx; 
 
    // Allocate memory
    cell_data = (struct cell *)malloc(grid_data->np * sizeof(struct cell));

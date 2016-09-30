@@ -28,4 +28,5 @@ struct properties
    float Difx, Dify;
    float u, v;
    float rho, gamma;
+   float Aw, Ae, As, An;
 };
