@@ -2,3 +2,8 @@
 *.o
 *.out
 *.exe
+
+# Documentation
+*.pdf
+*.aux
+*.log
