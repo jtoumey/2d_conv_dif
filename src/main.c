@@ -62,7 +62,7 @@ int main(void)
    calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
 
    // Overwrite boundary cell coefficients to apply boundary conditions
-   set_boundary_conditions(grid_data, fvm_coeff)
+//   set_boundary_conditions(grid_data, fvm_coeff);
 
 
 

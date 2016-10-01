@@ -2,7 +2,7 @@
 
 void set_boundary_conditions(struct block *grid_data)
 {
-   int ii, kk;
+/*   int ii, kk;
 
    // Adjust coefficients for West boundary, running S to N
    for(ii = 0; ii < ny; ii++)
@@ -29,5 +29,5 @@ void set_boundary_conditions(struct block *grid_data)
    {
 
 
-   }
+   }*/
 }
