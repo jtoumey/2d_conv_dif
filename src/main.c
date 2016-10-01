@@ -6,7 +6,8 @@
 
 // Declarations of function prototypes
 void calc_grid(struct block *grid_data, struct cell *cell_data);
-void calc_fvm_coefficients(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
+void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
+void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff);
 
 // Main driver function
 int main(void)
@@ -56,6 +57,13 @@ int main(void)
 
    // Set cell centers
    calc_grid(grid_data, cell_data);
+ 
+   // Calculate FVM coefficients for all cells (in the same manner)
+   calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
+
+   // Overwrite boundary cell coefficients to apply boundary conditions
+   set_boundary_conditions(grid_data, fvm_coeff)
+
 
 
 
@@ -68,10 +76,8 @@ int main(void)
    {
       printf("      [%3i]       (%6.4f, %6.4f)\n",ii,cell_data[ii].x, cell_data[ii].y);
    }
-//   calc_fvm_coefficients()
 
-   calc_fvm_coefficients(grid_data, fvm_coeff, phys_prop);
-
+   // Print the Coefficients 
    printf("|   a_W   |   a_E   |   a_S   |   a_N   |   S_u   |   S_p   |\n");
    printf("|=========|=========|=========|=========|=========|=========|\n");
    for(ii = 0; ii < grid_data->np; ii++)
