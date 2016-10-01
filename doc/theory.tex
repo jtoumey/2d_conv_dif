@@ -9,6 +9,7 @@
 \newcommand{\FA}[1]{F_{#1} A_{#1}}
 
 \newcommand{\dby}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\intb}[1]{\int\limits_{#1}}
 
 \newcommand{\lp}{\left(}
 \newcommand{\rp}{\right)}
@@ -28,15 +29,19 @@
 
 
 \section{Governing Equations}
-\textbf{Convection-Diffusion}
+The first equation governing the behavior of fluid in the domain is the two-dimensional convection-diffusion equation.
+
 \begin{equation}
    \divc{\rho \mathbf{u} \phi} = \divc{\Gamma \, \mathrm{grad}\, \phi} + S_{\phi}
-\end{equation}
-\begin{equation}
-   \dby{\rho u \phi}{x} + \dby{\rho v \phi}{y} = \dby{}{x} \lp \Gamma \dby{\phi}{x} \rp + \dby{}{y} \lp \Gamma \dby{\phi}{y} \rp + S
+   \label{eqn:c-d}
 \end{equation}
 
-\textbf{Conservation of Momentum}
+In the above equation, $\rho$ is the fluid density, $\mathbf{u}$ is the velocity vector, $\phi$ is the scalar which we transport, $\Gamma$ is the diffusion coefficient, and $S_{\phi}$ is the source term.
+
+Note that the current implementation assumes that the flow is source-free so we will eliminate the $S_{\phi}$ term in later representations of this equation.
+
+
+The second governing equation is the continuity equation (conservation of momentum).
 
 \begin{equation}
    \divc{\rho \mathbf{u}} = 0
@@ -46,7 +51,22 @@
 \end{equation}
 
 \section{Derivation of FVM Coefficents}
-The discretization of the governing equation follows the method of Versteeg \& Malalasekera.
+The discretization of the governing equation follows the method of Versteeg \& Malalasekera. First, we expand the convection-diffusion equation (\ref{eqn:c-d}) for two dimensions.
+
+\begin{equation}
+   \dby{\rho u \phi}{x} + \dby{\rho v \phi}{y} = \dby{}{x} \lp \Gamma \dby{\phi}{x} \rp + \dby{}{y} \lp \Gamma \dby{\phi}{y} \rp + S
+\end{equation}
+
+Next, integrate the governing equation over a discrete control volume.
+
+\begin{equation}
+   \intb{CV} \dby{\rho u \phi}{x}\,dV + \intb{CV} \dby{\rho v \phi}{y}\,dV =\intb{CV} \dby{}{x} \lp \Gamma \dby{\phi}{x} \rp\,dV + \intb{CV} \dby{}{y} \lp \Gamma \dby{\phi}{y} \rp\,dV + \intb{CV} S\,dV
+\end{equation}
+
+
+
+
+
 In the equation below, $\mathrm{nb}$ indicates a neighbor node. 
 
 \begin{equation}
@@ -72,6 +92,12 @@ For interior cells, we can calculate the coefficients via the following formulat
    $S_P$ & 0 \\ \hline
 \end{tabular}
 \end{table}
+
+
+\section{Algorithm Details}
+
+\subsection{Pressure-Velocity Coupling}
+For this implementation, we assume that the velocity field is known \textit{a priori}. Therefore, we store velocities, density, and the advected scalar $\phi$ at the cell center and avoid specific treatments of pressure-velocity coupling. These treatments include a staggered grid storage arrangement and predictor-corrector methods for iteratively determining the velocity field.
 
 
 \end{document}
