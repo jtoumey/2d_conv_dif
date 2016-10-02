@@ -53,4 +53,11 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
       fvm_coeff[ii].S_p = fvm_coeff[ii].S_p + -(2*phys_prop->Difx*phys_prop->Ae - max(0, -phys_prop->Fx * phys_prop->Aw));
 
    }
+
+   // Now that all coefficients are up to date, we can compute a_P
+   for(ii = 0; ii < grid_data->np; ii++)
+   {
+      fvm_coeff[ii].a_P = fvm_coeff[ii].a_W + fvm_coeff[ii].a_E + fvm_coeff[ii].a_S + fvm_coeff[ii].a_N - fvm_coeff[ii].S_p;
+
+   }
 }

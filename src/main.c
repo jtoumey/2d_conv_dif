@@ -8,6 +8,7 @@
 void calc_grid(struct block *grid_data, struct cell *cell_data);
 void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
+void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
 
 // Main driver function
 int main(void)
@@ -59,6 +60,11 @@ int main(void)
    // Allocate memory for 1D arrays of structs for cell and coefficient data structures
    cell_data = (struct cell *)malloc(grid_data->np * sizeof(struct cell));
    fvm_coeff = (struct coeff *)malloc(grid_data->np * sizeof(struct coeff));
+ 
+   for(ii=0;ii<grid_data->np;ii++)
+   {
+      cell_data[ii].phi = .45;
+   }
 
    // Set cell centers
    calc_grid(grid_data, cell_data);
@@ -68,6 +74,9 @@ int main(void)
 
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
+
+   // Solve the system via jacobi iteration
+   solve_jacobi(grid_data, fvm_coeff, cell_data);
 
 
 
@@ -88,5 +97,11 @@ int main(void)
    {
       printf("   %5.3f     %5.3f     %5.3f     %5.3f     %5.3f     %5.3f  \n",fvm_coeff[ii].a_W, fvm_coeff[ii].a_E, fvm_coeff[ii].a_S,fvm_coeff[ii].a_N,fvm_coeff[ii].S_u,fvm_coeff[ii].S_p);
    }
+   printf("\n");
+   for(ii = 0; ii < grid_data->np; ii++)
+   {
+      printf("Phi solution: %f\n",cell_data[ii].phi);
+   }
+
    return(0);
 }
