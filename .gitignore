@@ -8,3 +8,6 @@
 *.pdf
 *.aux
 *.log
+
+# Input 
+*.inp
