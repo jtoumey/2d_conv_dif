@@ -2,6 +2,7 @@
 *.o
 *.out
 *.exe
+/bin/convdif
 
 # Documentation
 *.pdf
