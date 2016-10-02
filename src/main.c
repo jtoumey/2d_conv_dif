@@ -7,7 +7,7 @@
 // Declarations of function prototypes
 void calc_grid(struct block *grid_data, struct cell *cell_data);
 void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
-void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff);
+void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 
 // Main driver function
 int main(void)
@@ -36,6 +36,11 @@ int main(void)
    grid_data->dx = (grid_data->xmax-grid_data->xmin)/grid_data->nx;
    grid_data->dy = (grid_data->ymax-grid_data->ymin)/grid_data->ny;
 
+   grid_data->phi_A = 100.0;
+   grid_data->phi_B = 0.0;
+   grid_data->phi_C = 100.0;
+   grid_data->phi_D = 0.0;
+
    phys_prop->rho = 1.4;
    phys_prop->gamma = 0.6;
    phys_prop->u = 0.8;
@@ -62,8 +67,7 @@ int main(void)
    calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
 
    // Overwrite boundary cell coefficients to apply boundary conditions
-//   set_boundary_conditions(grid_data, fvm_coeff);
-
+   set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
 
 

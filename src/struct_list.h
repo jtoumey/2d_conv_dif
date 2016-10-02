@@ -12,6 +12,7 @@ struct block
    int nx, ny, np;
    float xmin, xmax;
    float ymin, ymax;
+   float phi_A, phi_B, phi_C, phi_D;
    // Calculated
    float dx, dy;
 };
