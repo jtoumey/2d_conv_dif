@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "struct_list.h"
-
+//e
 
 // Declarations of function prototypes
 void calc_grid(struct block *grid_data, struct cell *cell_data);
@@ -36,6 +36,9 @@ int main(void)
    grid_data->ymax = 0.6;
    grid_data->dx = (grid_data->xmax-grid_data->xmin)/grid_data->nx;
    grid_data->dy = (grid_data->ymax-grid_data->ymin)/grid_data->ny;
+
+   printf("dx: %f\n",grid_data->dx);
+   printf("dy: %f\n",grid_data->dy);
 
    grid_data->phi_A = 100.0;
    grid_data->phi_B = 0.0;
@@ -97,11 +100,11 @@ int main(void)
    {
       printf("   %5.3f     %5.3f     %5.3f     %5.3f     %5.3f     %5.3f  \n",fvm_coeff[ii].a_W, fvm_coeff[ii].a_E, fvm_coeff[ii].a_S,fvm_coeff[ii].a_N,fvm_coeff[ii].S_u,fvm_coeff[ii].S_p);
    }
+
    printf("\n");
    for(ii = 0; ii < grid_data->np; ii++)
    {
       printf("Phi solution: %f\n",cell_data[ii].phi);
    }
-
    return(0);
 }
