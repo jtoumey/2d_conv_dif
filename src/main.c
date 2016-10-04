@@ -5,6 +5,7 @@
 //e
 
 // Declarations of function prototypes
+void read_input(struct block *grid_data, struct properties *phys_prop);
 void calc_grid(struct block *grid_data, struct cell *cell_data);
 void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
@@ -24,6 +25,8 @@ int main(void)
 
    grid_data = (struct block *)malloc(sizeof(struct block));
    phys_prop = (struct properties *)malloc(sizeof(struct properties));
+
+   read_input(grid_data, phys_prop);
 
    // Enter inputs (replace with file parser later)
    grid_data->nx = 4;
