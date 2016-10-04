@@ -8,13 +8,24 @@ void read_input(struct block *grid_data, struct properties *phys_prop)
    char buffer[100];
 
    fptr_input = fopen("input.inp", "r");
-   printf("open input file\n");
-//   fgets(buffer, 100, fptr_input);
-/*
+
    if(fptr_input == NULL)
    { 
-      printf("*** Error opening the input file. ***");
+      printf("*** Error opening the input file. ***\n");
    }
-*/
+   // The input file is fixed format, so move through line-by-line
+   else
+   {
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         puts(buffer);
+         sscanf(buffer, "%*s %f", &grid_data->xmin);
+         printf("The value from file is %f\n", grid_data->xmin);
+
+      }
+
+   }   
+
    fclose(fptr_input);
 }
