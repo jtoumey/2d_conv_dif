@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "struct_list.h"
+#include <string.h>
 
 void read_input(struct block *grid_data, struct properties *phys_prop)
 {
@@ -22,6 +23,7 @@ void read_input(struct block *grid_data, struct properties *phys_prop)
          puts(buffer);
          sscanf(buffer, "%*s %f", &grid_data->xmin);
          printf("The value from file is %f\n", grid_data->xmin);
+//         if(strncmp()
 
       }
 
