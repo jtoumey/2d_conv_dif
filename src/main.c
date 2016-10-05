@@ -29,31 +29,13 @@ int main(void)
    read_input(grid_data, phys_prop);
 
    // Enter inputs (replace with file parser later)
-/*
-   grid_data->nx = 4;
-   grid_data->ny = 3;*/
    grid_data->np = grid_data->nx*grid_data->ny;
-/*
-   grid_data->xmin = 0.0;
-   grid_data->xmax = 1.0;
-   grid_data->ymin = 0.0;
-   grid_data->ymax = 0.6;*/
    grid_data->dx = (grid_data->xmax-grid_data->xmin)/grid_data->nx;
    grid_data->dy = (grid_data->ymax-grid_data->ymin)/grid_data->ny;
 
    printf("dx: %f\n",grid_data->dx);
    printf("dy: %f\n",grid_data->dy);
-/*
-   grid_data->phi_A = 100.0;
-   grid_data->phi_B = 0.0;
-   grid_data->phi_C = 100.0;
-   grid_data->phi_D = 0.0;
 
-   phys_prop->rho = 1.4;
-   phys_prop->gamma = 0.6;
-   phys_prop->u = 0.8;
-   phys_prop->v = 0.8;
-*/
    phys_prop->Fx = phys_prop->rho*phys_prop->u;
    phys_prop->Fy = phys_prop->rho*phys_prop->v;
    phys_prop->Difx = phys_prop->gamma/grid_data->dx;
