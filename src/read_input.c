@@ -20,13 +20,73 @@ void read_input(struct block *grid_data, struct properties *phys_prop)
       fgets(buffer, 100, fptr_input);
       if(buffer != NULL)
       {
-         puts(buffer);
-         sscanf(buffer, "%*s %f", &grid_data->xmin);
-         printf("The value from file is %f\n", grid_data->xmin);
-//         if(strncmp()
-
+         sscanf(buffer, "%*s %d", &grid_data->nx);
       }
-
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %d", &grid_data->ny);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->xmin);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->xmax);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->ymin);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->ymax);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->phi_A);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->phi_B);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->phi_C);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &grid_data->phi_D);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &phys_prop->rho);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &phys_prop->gamma);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &phys_prop->u);
+      }
+      fgets(buffer, 100, fptr_input);
+      if(buffer != NULL)
+      {
+         sscanf(buffer, "%*s %f", &phys_prop->v);
+      }
    }   
 
    fclose(fptr_input);
