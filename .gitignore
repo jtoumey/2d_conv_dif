@@ -3,6 +3,7 @@
 *.out
 *.exe
 /bin/convdif
+/bin
 
 # Documentation
 *.pdf
