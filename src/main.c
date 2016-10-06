@@ -16,7 +16,7 @@ void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell
 int main(void)
 {
    int ii, jj, kk;
-   int debug_mode = 1;
+   int debug_mode = 0;
    int iter = 0;
    float resid = 1.0;
    float frp;
@@ -84,7 +84,7 @@ int main(void)
       {
          frp = 1.0; 
       }
-  //    resid = resid/frp;
+      resid = resid/frp;
       iter++;
       printf("*** Iteration: %5i; Residual: %6.4f; Normalization (frp): %6.4f\n",iter, resid, frp);
       if(debug_mode !=0)
@@ -116,5 +116,10 @@ int main(void)
          printf("   %5.3f     %5.3f     %5.3f     %5.3f     %5.3f     %5.3f  \n",fvm_coeff[ii].a_W, fvm_coeff[ii].a_E, fvm_coeff[ii].a_S,fvm_coeff[ii].a_N,fvm_coeff[ii].S_u,fvm_coeff[ii].S_p);
       }
    }
+   for(ii = 0; ii < grid_data->np; ii++)
+   {
+      printf("Phi solution: %f\n",cell_data[ii].phi);
+   }
+
    return(0);
 }
