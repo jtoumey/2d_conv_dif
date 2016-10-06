@@ -10,12 +10,17 @@ void calc_grid(struct block *grid_data, struct cell *cell_data);
 void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
+void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, float *resid, float *frp);
 
 // Main driver function
 int main(void)
 {
    int ii, jj, kk;
    int debug_mode = 0;
+   int iter = 0;
+   float resid = 1.0;
+   float frp;
+   float tol = 0.001;
 
    // Define structs
    struct cell *cell_data;
@@ -65,9 +70,24 @@ int main(void)
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
-   // Solve the system via jacobi iteration
-   solve_jacobi(grid_data, fvm_coeff, cell_data);
+   // Begin outer loop
+   while(resid >= tol && iter < 50)
+   {
+      // Solve the system via jacobi iteration
+      solve_jacobi(grid_data, fvm_coeff, cell_data);
 
+      // Calculate the residual
+      calc_residual(grid_data, fvm_coeff, cell_data, &resid, &frp);
+      printf("raw residual: %8.4f\n",resid);
+      
+      if(iter < 1)
+      {
+         frp = 1.0; 
+      }
+      resid = resid/frp;
+      iter++;
+      printf("*** Iteration: %5i; Residual: %6.4f; Normalization (frp): %6.4f\n",iter, resid, frp);
+   }
 
 
    // Test print statements
