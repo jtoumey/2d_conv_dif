@@ -21,6 +21,7 @@ int main(void)
    float resid = 1.0;
    float frp;
    float tol = 0.001;
+   FILE *fptr_output;
 
    // Define structs
    struct cell *cell_data;
@@ -120,6 +121,17 @@ int main(void)
    {
       printf("Phi solution: %f\n",cell_data[ii].phi);
    }
+   fptr_output = fopen("output.dat","w");
+   for(ii = 0; ii < grid_data->nx; ii++)
+   {
+      for(jj = 0; jj < grid_data->ny; jj++)
+      {
+         kk = ii*grid_data->ny + jj;
+         fprintf(fptr_output, "%12.6f\t%12.6f\t%12.6f\n", cell_data[kk].x, cell_data[kk].y, cell_data[kk].phi);
+      }
+      fprintf(fptr_output, "\n");
+   }
+   fclose(fptr_output);
 
    return(0);
 }

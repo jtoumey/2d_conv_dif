@@ -61,6 +61,6 @@ void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell
       aP_phiP = fvm_coeff[i].a_P * cell_data[i].phi;
       *resid += fabs(fvm_coeff[i].a_W * phi_adj_W + fvm_coeff[i].a_E * phi_adj_E + fvm_coeff[i].a_S * phi_adj_S + fvm_coeff[i].a_N * phi_adj_N + fvm_coeff[i].S_u - aP_phiP);
       *frp += aP_phiP;
-      printf("Resid from calc_resid in loop: %12.4f\n", *resid);
+     // printf("Resid from calc_resid in loop: %12.4f\n", *resid);
    }
 }
