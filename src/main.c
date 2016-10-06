@@ -15,6 +15,7 @@ void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell 
 int main(void)
 {
    int ii, jj, kk;
+   int debug_mode = 0;
 
    // Define structs
    struct cell *cell_data;
@@ -70,27 +71,29 @@ int main(void)
 
 
    // Test print statements
-
-   // Print the cell centers
-   printf("|  Cell Index  |  (x_cen, y_cen)  |\n");
-   printf("|==============|==================|\n");
-   for(ii = 0; ii < grid_data->np; ii++)
+   if(debug_mode !=0)
    {
-      printf("      [%3i]       (%6.4f, %6.4f)\n",ii,cell_data[ii].x, cell_data[ii].y);
-   }
+      // Print the cell centers
+      printf("|  Cell Index  |  (x_cen, y_cen)  |\n");
+      printf("|==============|==================|\n");
+      for(ii = 0; ii < grid_data->np; ii++)
+      {
+         printf("      [%3i]       (%6.4f, %6.4f)\n",ii,cell_data[ii].x, cell_data[ii].y);
+      }
 
-   // Print the Coefficients 
-   printf("|   a_W   |   a_E   |   a_S   |   a_N   |   S_u   |   S_p   |\n");
-   printf("|=========|=========|=========|=========|=========|=========|\n");
-   for(ii = 0; ii < grid_data->np; ii++)
-   {
-      printf("   %5.3f     %5.3f     %5.3f     %5.3f     %5.3f     %5.3f  \n",fvm_coeff[ii].a_W, fvm_coeff[ii].a_E, fvm_coeff[ii].a_S,fvm_coeff[ii].a_N,fvm_coeff[ii].S_u,fvm_coeff[ii].S_p);
-   }
+      // Print the Coefficients 
+      printf("|   a_W   |   a_E   |   a_S   |   a_N   |   S_u   |   S_p   |\n");
+      printf("|=========|=========|=========|=========|=========|=========|\n");
+      for(ii = 0; ii < grid_data->np; ii++)
+      {
+         printf("   %5.3f     %5.3f     %5.3f     %5.3f     %5.3f     %5.3f  \n",fvm_coeff[ii].a_W, fvm_coeff[ii].a_E, fvm_coeff[ii].a_S,fvm_coeff[ii].a_N,fvm_coeff[ii].S_u,fvm_coeff[ii].S_p);
+      }
 
-   printf("\n");
-   for(ii = 0; ii < grid_data->np; ii++)
-   {
-      printf("Phi solution: %f\n",cell_data[ii].phi);
+      printf("\n");
+      for(ii = 0; ii < grid_data->np; ii++)
+      {
+         printf("Phi solution: %f\n",cell_data[ii].phi);
+      }
    }
    return(0);
 }
