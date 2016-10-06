@@ -16,7 +16,7 @@ void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell
 int main(void)
 {
    int ii, jj, kk;
-   int debug_mode = 0;
+   int debug_mode = 1;
    int iter = 0;
    float resid = 1.0;
    float frp;
@@ -39,8 +39,8 @@ int main(void)
    grid_data->dx = (grid_data->xmax-grid_data->xmin)/grid_data->nx;
    grid_data->dy = (grid_data->ymax-grid_data->ymin)/grid_data->ny;
 
-   printf("dx: %f\n",grid_data->dx);
-   printf("dy: %f\n",grid_data->dy);
+//   printf("dx: %f\n",grid_data->dx);
+//   printf("dy: %f\n",grid_data->dy);
 
    phys_prop->Fx = phys_prop->rho*phys_prop->u;
    phys_prop->Fy = phys_prop->rho*phys_prop->v;
@@ -71,7 +71,7 @@ int main(void)
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
    // Begin outer loop
-   while(resid >= tol && iter < 50)
+   while(resid >= tol && iter < 2)
    {
       // Solve the system via jacobi iteration
       solve_jacobi(grid_data, fvm_coeff, cell_data);
