@@ -12,3 +12,6 @@
 
 # Input 
 *.inp
+
+# Output
+*.dat
