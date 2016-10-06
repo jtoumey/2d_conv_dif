@@ -58,7 +58,7 @@ int main(void)
  
    for(ii=0;ii<grid_data->np;ii++)
    {
-      cell_data[ii].phi = .45;
+      cell_data[ii].phi = 0.0;
    }
 
    // Set cell centers
@@ -71,7 +71,7 @@ int main(void)
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
    // Begin outer loop
-   while(resid >= tol && iter < 2)
+   while(resid >= tol && iter < 10)
    {
       // Solve the system via jacobi iteration
       solve_jacobi(grid_data, fvm_coeff, cell_data);
@@ -84,9 +84,16 @@ int main(void)
       {
          frp = 1.0; 
       }
-      resid = resid/frp;
+  //    resid = resid/frp;
       iter++;
       printf("*** Iteration: %5i; Residual: %6.4f; Normalization (frp): %6.4f\n",iter, resid, frp);
+      if(debug_mode !=0)
+      {
+         for(ii = 0; ii < grid_data->np; ii++)
+         {
+            printf("Phi solution: %f\n",cell_data[ii].phi);
+         }
+      }
    }
 
 
@@ -107,12 +114,6 @@ int main(void)
       for(ii = 0; ii < grid_data->np; ii++)
       {
          printf("   %5.3f     %5.3f     %5.3f     %5.3f     %5.3f     %5.3f  \n",fvm_coeff[ii].a_W, fvm_coeff[ii].a_E, fvm_coeff[ii].a_S,fvm_coeff[ii].a_N,fvm_coeff[ii].S_u,fvm_coeff[ii].S_p);
-      }
-
-      printf("\n");
-      for(ii = 0; ii < grid_data->np; ii++)
-      {
-         printf("Phi solution: %f\n",cell_data[ii].phi);
       }
    }
    return(0);
