@@ -9,6 +9,7 @@ void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell
    FILE *fptr_output;
    FILE *fptr_coeff;
 
+   // Print the value of \phi at each cell center in the domain
    fptr_output = fopen("phi.dat","w");
    for(ii = 0; ii < grid_data->nx; ii++)
    {
@@ -21,8 +22,11 @@ void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell
    }
    fclose(fptr_output);
 
+   // For debugging, print the FVM coefficient data to a file
    if(debug_mode != 0)
    {
+
+      fptr_coeff = fopen("fvm_coeff.dat","w");
       // Print the Coefficients 
       fprintf(fptr_coeff,"|   a_W   |   a_E   |   a_S   |   a_N   |   S_u   |   S_p   |\n");
       fprintf(fptr_coeff,"|=========|=========|=========|=========|=========|=========|\n");
