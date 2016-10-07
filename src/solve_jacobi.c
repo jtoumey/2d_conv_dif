@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "struct_list.h"
 
 void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data)
@@ -11,6 +10,7 @@ void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell 
    for(ii = 0; ii < grid_data->np; ii++)
    {
       // As we step through the cells, identify those on the boundary and set the values of \phi beyond the boundary to 0.0
+
       // Identify West cells 
       if(ii < grid_data->ny)
       {
