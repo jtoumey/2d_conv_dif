@@ -5,7 +5,7 @@ TARGET   = convdif
 CC       = gcc
 # compiler flags
 #CFLAGS   = -std=c99 -Wall -I.
-#CFLAGS   = -Wall
+#CFLAGS   = -Wall -Wextra
 
 LINKER   = gcc -o
 # linking flags
