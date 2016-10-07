@@ -11,16 +11,16 @@ void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct pro
 void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
 void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, float *resid, float *frp);
+void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
 
 // Main driver function
 int main(void)
 {
    int ii, jj, kk;
-   int debug_mode = 0;
    int iter = 0;
    float resid = 1.0;
    float frp;
-   float tol = 0.001;
+   float tol = 0.000001;
    FILE *fptr_output;
 
    // Define structs
@@ -72,14 +72,14 @@ int main(void)
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
    // Begin outer loop
-   while(resid >= tol && iter < 10)
+   while(resid >= tol)// && iter < 10)
    {
       // Solve the system via jacobi iteration
       solve_jacobi(grid_data, fvm_coeff, cell_data);
 
       // Calculate the residual
       calc_residual(grid_data, fvm_coeff, cell_data, &resid, &frp);
-      printf("raw residual: %8.4f\n",resid);
+     // printf("raw residual: %8.4f\n",resid);
       
       if(iter < 1)
       {
@@ -88,50 +88,10 @@ int main(void)
       resid = resid/frp;
       iter++;
       printf("*** Iteration: %5i; Residual: %6.4f; Normalization (frp): %6.4f\n",iter, resid, frp);
-      if(debug_mode !=0)
-      {
-         for(ii = 0; ii < grid_data->np; ii++)
-         {
-            printf("Phi solution: %f\n",cell_data[ii].phi);
-         }
-      }
    }
 
-
-   // Test print statements
-   if(debug_mode !=0)
-   {
-      // Print the cell centers
-      printf("|  Cell Index  |  (x_cen, y_cen)  |\n");
-      printf("|==============|==================|\n");
-      for(ii = 0; ii < grid_data->np; ii++)
-      {
-         printf("      [%3i]       (%6.4f, %6.4f)\n",ii,cell_data[ii].x, cell_data[ii].y);
-      }
-
-      // Print the Coefficients 
-      printf("|   a_W   |   a_E   |   a_S   |   a_N   |   S_u   |   S_p   |\n");
-      printf("|=========|=========|=========|=========|=========|=========|\n");
-      for(ii = 0; ii < grid_data->np; ii++)
-      {
-         printf("   %5.3f     %5.3f     %5.3f     %5.3f     %5.3f     %5.3f  \n",fvm_coeff[ii].a_W, fvm_coeff[ii].a_E, fvm_coeff[ii].a_S,fvm_coeff[ii].a_N,fvm_coeff[ii].S_u,fvm_coeff[ii].S_p);
-      }
-   }
-   for(ii = 0; ii < grid_data->np; ii++)
-   {
-      printf("Phi solution: %f\n",cell_data[ii].phi);
-   }
-   fptr_output = fopen("output.dat","w");
-   for(ii = 0; ii < grid_data->nx; ii++)
-   {
-      for(jj = 0; jj < grid_data->ny; jj++)
-      {
-         kk = ii*grid_data->ny + jj;
-         fprintf(fptr_output, "%12.6f\t%12.6f\t%12.6f\n", cell_data[kk].x, cell_data[kk].y, cell_data[kk].phi);
-      }
-      fprintf(fptr_output, "\n");
-   }
-   fclose(fptr_output);
+   // Write the results to a file
+   write_results(grid_data, fvm_coeff, cell_data); 
 
    return(0);
 }
