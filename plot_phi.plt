@@ -1,4 +1,4 @@
-splot 'output.dat'
+splot 'phi.dat'
 set xrange [0:1]
 set yrange [0:1]
 
