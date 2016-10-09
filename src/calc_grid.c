@@ -11,7 +11,6 @@ void calc_grid(struct block *grid_data, struct cell *cell_data)
    // Discretize the domain
    for(ii = 0; ii < grid_data->nx; ii++)
    {
-      printf("x location: %4i\n",ii);
       for(jj = 0; jj < grid_data->ny; jj++)
       {
          // Cells are in a 1D array, so convert the (i, j) indices to a cell index

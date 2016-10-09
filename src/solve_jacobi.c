@@ -5,6 +5,7 @@ void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell 
 {
    int ii;
    float phi_adj_W, phi_adj_E, phi_adj_S, phi_adj_N;
+   float eps = 0.0; // 10e-8;
 
    // Loop through all cells
    for(ii = 0; ii < grid_data->np; ii++)
@@ -52,7 +53,7 @@ void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell 
       }
 
       // Now perform the actual Jacobi iteration step
-      cell_data[ii].phi = (fvm_coeff[ii].a_W * phi_adj_W + fvm_coeff[ii].a_E * phi_adj_E + fvm_coeff[ii].a_S * phi_adj_S + fvm_coeff[ii].a_N * phi_adj_N + fvm_coeff[ii].S_u)/fvm_coeff[ii].a_P;
+      cell_data[ii].phi = (fvm_coeff[ii].a_W * phi_adj_W + fvm_coeff[ii].a_E * phi_adj_E + fvm_coeff[ii].a_S * phi_adj_S + fvm_coeff[ii].a_N * phi_adj_N + fvm_coeff[ii].S_u)/(fvm_coeff[ii].a_P + eps);
 
    }
 

@@ -11,6 +11,8 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
 void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
 void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, float *resid, float *frp);
 void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
+// Debug
+void write_coefficients(struct block *grid_data, struct coeff *fvm_coeff);
 
 // Main driver function
 int main(void)
@@ -47,10 +49,13 @@ int main(void)
  
    // Calculate FVM coefficients for all cells (in the same manner)
    calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
-
+   // Print the Coefficients 
+// write_coefficients(grid_data, fvm_coeff);
+ 
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
+   write_coefficients(grid_data, fvm_coeff);
    // Begin outer loop
    while(resid >= tol)
    {
