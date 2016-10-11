@@ -49,7 +49,7 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    //   printf("\nEast bndry index: %d\n", ii);
       fvm_coeff[ii].a_W = phys_prop->Difx * phys_prop->Aw + max(0, phys_prop->Fx * phys_prop->Aw);
       fvm_coeff[ii].a_E = 0.0; 
-      fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Difx * phys_prop->Ae * grid_data->phi_B - grid_data->phi_B * max(0, -phys_prop->Fx * phys_prop->Ae);
+      fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Difx * phys_prop->Ae * grid_data->phi_B + grid_data->phi_B * max(0, -phys_prop->Fx * phys_prop->Ae);
       fvm_coeff[ii].S_p = fvm_coeff[ii].S_p + -(2*phys_prop->Difx*phys_prop->Ae + max(0, -phys_prop->Fx * phys_prop->Aw));
 
    }
