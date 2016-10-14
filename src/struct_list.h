@@ -36,3 +36,9 @@ struct properties
    // Cell face areas
    float Aw, Ae, As, An;
 };
+
+// Solver and numerical method information
+struct settings
+{
+   float tol;
+};

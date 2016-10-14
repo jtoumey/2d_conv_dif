@@ -3,7 +3,7 @@
 #include "struct_list.h"
 
 // Declarations of function prototypes
-void read_input(struct block *grid_data, struct properties *phys_prop);
+void read_input(struct block *grid_data, struct properties *phys_prop, struct settings *solv_setting);
 void calc_grid(struct block *grid_data, struct cell *cell_data);
 void initialize_properties(struct block *grid_data, struct cell *cell_data, struct properties *phys_prop);
 void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
@@ -28,13 +28,15 @@ int main(void)
    struct block *grid_data;
    struct coeff *fvm_coeff;
    struct properties *phys_prop;
+   struct settings *solv_settings;
 
    // Allocate memory for the grid information and physical properties
    grid_data = (struct block *)malloc(sizeof(struct block));
    phys_prop = (struct properties *)malloc(sizeof(struct properties));
+   solv_settings = (struct settings *)malloc(sizeof(struct settings));
 
    // Read data from the input file
-   read_input(grid_data, phys_prop);
+   read_input(grid_data, phys_prop, solv_settings);
    grid_data->np = grid_data->nx*grid_data->ny; // Calculate total number of cells in the domain
 
    // Allocate memory for 1D arrays of structs for cell and coefficient data structures
@@ -57,7 +59,7 @@ int main(void)
 
    write_coefficients(grid_data, fvm_coeff);
    // Begin outer loop
-   while(resid >= tol)
+   while(resid >= solv_settings->tol) 
    {
       // Solve the system via jacobi iteration
       solve_jacobi(grid_data, fvm_coeff, cell_data);
