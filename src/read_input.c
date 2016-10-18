@@ -95,7 +95,12 @@ void read_input(struct block *grid_data, struct properties *phys_prop, struct se
          printf("***          Please examine your input file.                                          ***\n");
       }
    }
-   printf("*** Successfully read input file. ***\n");
-
+   if(feof(fptr_input))
+   {
+      // fgets terminated due to reaching EOF
+      printf("*** End of file.                  ***\n");
+      printf("*** Successfully read input file. ***\n");
+   }
+ 
    fclose(fptr_input);
 }
