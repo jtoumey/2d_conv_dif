@@ -21,7 +21,6 @@ int main(void)
    int iter = 0;
    float resid = 1.0;
    float frp;
-   float tol = 0.000001;
 
    // Define structs
    struct cell *cell_data;
