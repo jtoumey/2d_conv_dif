@@ -37,7 +37,7 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
   //    printf("\nNorth bndry index: %d\n", ii);
       fvm_coeff[ii].a_S = phys_prop->Dify * phys_prop->As + max(0, phys_prop->Fy * phys_prop->As);
       fvm_coeff[ii].a_N = 0.0;
-      fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Dify * phys_prop->An * grid_data->phi_D - grid_data->phi_D * max(0, -phys_prop->Fy * phys_prop->An);
+      fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Dify * phys_prop->An * grid_data->phi_D + grid_data->phi_D * max(0, -phys_prop->Fy * phys_prop->An);
       fvm_coeff[ii].S_p = fvm_coeff[ii].S_p + -(2*phys_prop->Dify*phys_prop->An + max(0, -phys_prop->Fy * phys_prop->As));
 
    }
