@@ -2,6 +2,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
+\usepackage{array}
 
 
 % Custom command definitions
@@ -63,41 +64,169 @@ Next, integrate the governing equation over a discrete control volume.
    \intb{CV} \dby{\rho u \phi}{x}\,dV + \intb{CV} \dby{\rho v \phi}{y}\,dV =\intb{CV} \dby{}{x} \lp \Gamma \dby{\phi}{x} \rp\,dV + \intb{CV} \dby{}{y} \lp \Gamma \dby{\phi}{y} \rp\,dV + \intb{CV} S\,dV
 \end{equation}
 
+We apply Gauss's divergence theorem to convert the volume integrals to surface (area) integrals. The application of this theorem converts the integral of the divergence of a vector in a given volume to the integral of the vectors normal to infinitesimal surface area elements $dA$. 
 
+\begin{equation}
+    \intb{A} \rho u \phi\,dA + \intb{A} \rho v \phi\,dA = \intb{A} \Gamma \dby{\phi}{x}\,dA + \intb{A} \Gamma \dby{\phi}{y}\,dA
+\end{equation}
 
+Since the domain is 2D and the grid is Cartesian, the surface elements are cell faces with area $\Delta y$ for $x$-components of the vector quantity and $\Delta y$ for $y$-components of the vector quantity. Computing the surface integrals from above yields the following discrete form for each cell.
 
+\begin{multline*}
+   \lp \rho u \phi A \rp_e - \lp \rho u \phi A \rp_w +
+   \lp \rho v \phi A \rp_n - \lp \rho v \phi A \rp_s = \\
+   \lp \Gamma A \dby{\phi}{x} \rp_e - \lp \Gamma A \dby{\phi}{x} \rp_w + \lp \Gamma A \dby{\phi}{y} \rp_n - \lp \Gamma A \dby{\phi}{y} \rp_s
+\end{multline*}
 
-In the equation below, $\mathrm{nb}$ indicates a neighbor node. 
+Note that the diffusion terms contain the gradient of the scalar $\phi$ at each cell face. We evaluate this gradient via a linear interpolation. For example, at the \textbf{East} face:
+
+\begin{equation}
+   \lp \Gamma \dby{\phi}{x} \rp_e = \Gamma_e \frac{\phi_E - \phi_P}{\Delta x}
+\end{equation}
+
+For convenience, we can define two new variables $F$ and $D$ to represent convective mass flux per unit area and diffusion conductance at the cell faces [V\&M]. Table \ref{tab:fdabbrev} below summarizes these new variables.
+
+\begin{table}[!ht]
+\centering
+\label{tab:fdabbrev}
+$\begin{array}{lcllcl}
+     F_e &=& \lp \rho u \rp_e & D_e &=& \Gamma_e/\Delta x \\
+     F_w &=& \lp \rho u \rp_w & D_w &=& \Gamma_w/\Delta x \\
+     F_n &=& \lp \rho v \rp_n & D_n &=& \Gamma_n/\Delta y \\
+     F_s &=& \lp \rho v \rp_s & D_s &=& \Gamma_s/\Delta y
+\end{array}$
+\end{table}
+
+Making these substitutions yields
+
+\begin{multline}
+   \lp FA\phi \rp_e - \lp FA\phi \rp_w + \lp FA\phi \rp_n - \lp FA\phi \rp_s = \\ D_e A_e \lp \phi_E - \phi_P \rp - D_w A_w \lp \phi_P - \phi_W \rp + D_n A_n \lp \phi_N - \phi_P \rp - D_s A_s \lp \phi_P - \phi_S \rp
+\end{multline}
+
+At this point, we need to make some approximation for the values of $\phi$ at cell faces. Since information is stored at nodes (\textit{e.g.}, $\phi_E$), we need a way to determine $\phi_e$.
+
+For this code, we use the first-order upwind (FOU) scheme. This scheme accounts for the convective property of the fluid by approximating a cell face value with its upwind value (\textit{e.g.}, $\phi_e = \phi_P$ if flow moves from \textbf{W}$\rightarrow$\textbf{E}). Table \ref{tab:fou} collects the approximation for cell face values. 
+
+\begin{table}[!ht]
+\caption{Upwind Approximations}
+\centering
+$\begin{array}{lcc} \hline
+     F_e > 0,\, F_w > 0 & \phi_e = \phi_P & \phi_w = \phi_W \\
+     F_e < 0,\, F_w < 0 & \phi_e = \phi_E & \phi_w = \phi_P \\
+     F_n > 0,\, F_s > 0 & \phi_n = \phi_P & \phi_s = \phi_S \\
+     F_n < 0,\, F_s < 0 & \phi_n = \phi_N & \phi_s = \phi_P 
+\end{array}$
+\label{tab:fou}
+\end{table}
+
+The general form of the discretized partial differential equations is as follows. Note that $\mathrm{nb}$ indicates a neighbor node (\textit{e.g.}, for node $P$, the neighbors are $W$, $E$, $S$, and $N$). 
 
 \begin{equation}
    a_P \phi_P = \sum a_{\mathrm{nb}} \phi_{\mathrm{nb}} + S_u
+   \label{eqn:ap_phip}
 \end{equation}
 
-For the central coefficient $a_P$, we use equation \ref{eqn:ap} to determine the value after calculating all other coefficients.
+We use equation \ref{eqn:ap} to calculate central coefficient $a_P$ after calculating all other coefficients.
 
 \begin{equation}
-   a_P = \sum a_{\mathrm{nb}} + \lp F_e - F_w \rp + \lp F_n - F_s \rp - S_P
+   a_P = \sum a_{\mathrm{nb}} + \lp F_e A_E - F_w A_w \rp + \lp F_n A_n - F_s A_s \rp - S_P
    \label{eqn:ap}
 \end{equation}
 
-For interior cells, we can calculate the coefficients via the following formulations.
+To determine the coefficients:
+\begin{enumerate}
+    \item Approximate the face values of $\phi$ via the expressions in table \ref{tab:fou}
+    \item Rearrange the result so the equations are in terms of the unknown scalar $\phi$ at each cell (as in equation \ref{eqn:ap_phip})
+    \item Compare the result to equations \ref{eqn:ap_phip} and \ref{eqn:ap} to determine the coefficients
+\end{enumerate}
+
+We skip the above steps because they are quite tedious. After working through the equations, we can calculate the coefficients for interior cells with the following formulations. Note that these are independent of flow direction.
+
 \begin{table}[!ht]
+\caption{Discrete Equation Coefficients}
 \centering
-\begin{tabular}{|l|c|} \hline
-   $a_W$ & $\DA{w} + max\left[0,  \FA{w}\right]$ \\ \hline
-   $a_E$ & $\DA{e} + max\left[0, -\FA{e}\right]$ \\ \hline
-   $a_S$ & $\DA{s} + max\left[0,  \FA{s}\right]$ \\ \hline
-   $a_N$ & $D_n A_n + max\left[0, -F_n A_n\right]$ \\ \hline
-   $S_u$ & 0 \\ \hline
-   $S_P$ & 0 \\ \hline
-\end{tabular}
+$\begin{array}{|l|ccl|} \hline
+   a_W & \DA{w} &+& max\left[0,  \FA{w}\right] \\ \hline
+   a_E & \DA{e} &+& max\left[0, -\FA{e}\right] \\ \hline
+   a_S & \DA{s} &+& max\left[0,  \FA{s}\right] \\ \hline
+   a_N & D_n A_n &+& max\left[0, -F_n A_n\right] \\ \hline
+   S_u & & 0 & \\ \hline
+   S_P & & 0 & \\ \hline
+\end{array}$
+\label{tab:coeffs}
 \end{table}
+
+\subsection{Derivation of FVM Coefficients at Boundaries}
+
+The previous section detailed the procedure for calculating FVM coefficients for cells in the interior of the domain. At boundaries, however, we must use a different procedure to account for the influence of the physical conditions at the boundary. The only available boundary condition is \textbf{Dirichlet}. That is, you may specify a fixed value of the transported scalar $\phi$ at each boundary wall. 
+
+\section{Data Structure}
+This implementation makes heavy use of the C language structures of arrays, \verb|structs|, and combinations of the two. In general, the code stores information associated with cells in 1D arrays or 1D arrays of \texttt{structs}. While a 2D array is more intuitive (since it reflects the physical domain more clearly), a 1D array is a more efficient use of memory and allows efficient use of iterative solvers.
+
+This storage scheme requires us to convert between $(i,\,j)$ indices and the single index representing a cell in the computer memory (usually \texttt{ii} in the code).
+
+\begin{table}[!ht]
+\caption{Discrete Equation Coefficients}
+\centering
+\begin{tabular}{l|l|c|c} 
+   Cell Location & Notation & Storage Index           & C Code Index\footnotemark \\\hline
+   $(i,\,j)$     & P        & $l = ny\lp i-1 \rp + j$ & $l - 1$ \\ \hline
+   $(i-1,\,j)$   & W        & 1 & 1
+\end{tabular}
+\label{tab:idx_conv}
+\end{table}
+
+\footnotetext{In the C programming language, arrays start with index 0.}
+
+\begin{itemize}
+    \item[\textbf{Grid:}] \texttt{struct block}\\ This structure contains geometry information and boundary conditions.
+    \item[\textbf{FVM Coefficients:}] \texttt{struct coeff}\\ This structure contains the finite volume coefficients for a given cell.
+    
+\end{itemize}
 
 
 \section{Algorithm Details}
 
+To calculate a converged solution, this code employs one \textbf{outer} loop. The decision to continue the outer loop depends on the residual from iteration to iteration. When this residual falls below the specified tolerance value, we consider the solution converged and terminate the loop. 
+
+Within the outer loop, the code performs Jacobi iteration to solve the linear system $A\phi = b$ and calculates the residual to determine convergence. To calculate the residual, the code uses the global residual method described in Versteeg \& Malalasekera.
+
+\subsection{Solution of the Linear System}
+Within each iteration of the outer loop, the code solves the linear system via Gauss-Seidel iteration. This method calculates the value of $\phi$ for a cell as a function of the finite volume coefficients (that make up the matrix $\mathbf{A}$) and the most recent values of $\phi$. 
+
+\begin{equation}
+    \phi_P^{\lp k \rp} = \sum_{j=1}^{i-1} \lp \frac{-a_{ij}}{a_{ii}} \rp
+\end{equation}
+
+
+
+\begin{equation}
+    \phi_i^{\lp k \rp}
+\end{equation}
+
+
+\subsection{Residual Calculation}
+
+Equation \ref{eqn:ap_phip} describes the discretized equation at each node. We subtract $a_P\phi_P$ from each side: this equation should be 0 when we reach the correct solution. As we iterate toward the correct solution, however, this equation will be non-zero and thus we will consider it the residual. 
+
+To calculate the local residual, we sum up the residuals from each cell $i$ at iteration $k$ over the entire domain.
+\begin{equation}
+    \lp \hat{R}^{\phi} \rp^{\lp k\rp} = \sum_{i=1}^M \lp R_i^{\phi}\rp^{\lp k \rp} = \sum_{i=1}^M \left|\lp \sum_{nb}a_{nb}\phi_{nb} \rp_i^{\lp k \rp} + b_i^{\lp k \rp} - \lp a_P\phi_P \rp_i^{\lp k \rp} \right|
+    \label{eqn:resid_local}
+\end{equation}
+
+To prevent different magnitudes of $\phi$ from requiring different tolerances, the code normalizes the global residual by dividing by a normalization factor:
+\begin{equation}
+    \lp \hat{R}_N^{\phi} \rp^{\lp k\rp} = \lp \hat{R}^{\phi} \rp^{\lp k\rp}/ \hat{F}_{R\phi}
+\end{equation}
+
+The normalization factor that the code employs is the absolute value of the central coefficient times $\phi$ at the cell center. That is:
+\begin{equation}
+    \hat{F}_{R\phi} = \sum_{i=1}^M \left|\lp a_P\phi_P \rp_i^{\lp k \rp} \right|
+\end{equation}
+
 \subsection{Pressure-Velocity Coupling}
-For this implementation, we assume that the velocity field is known \textit{a priori}. Therefore, we store velocities, density, and the advected scalar $\phi$ at the cell center and avoid specific treatments of pressure-velocity coupling. These treatments include a staggered grid storage arrangement and predictor-corrector methods for iteratively determining the velocity field.
+For this implementation, we assume that the velocity field is known \textit{a priori}. Therefore, we store velocities, density, and the advected/diffused scalar $\phi$ at the cell center and avoid specific treatments of pressure-velocity coupling.
 
 
 \end{document}
