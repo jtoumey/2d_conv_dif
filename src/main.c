@@ -50,13 +50,12 @@ int main(void)
  
    // Calculate FVM coefficients for all cells (in the same manner)
    calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
-   // Print the Coefficients 
-// write_coefficients(grid_data, fvm_coeff);
  
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
    write_coefficients(grid_data, fvm_coeff);
+
    // Begin outer loop
    while(resid >= solv_settings->tol) 
    {

@@ -34,7 +34,7 @@ struct properties
    float u, v;
    float rho, gamma;
    // Cell face areas
-   float Aw, Ae, As, An;
+   float area_west, area_east, area_south, area_north;
 };
 
 // Solver and numerical method information
