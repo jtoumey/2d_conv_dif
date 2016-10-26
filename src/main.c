@@ -5,12 +5,13 @@
 // Declarations of function prototypes
 void read_input(struct block *grid_data, struct properties *phys_prop, struct settings *solv_setting);
 void calc_grid(struct block *grid_data, struct cell *cell_data);
-void initialize_properties(struct block *grid_data, struct cell *cell_data, struct properties *phys_prop);
+void initialize_properties(struct block *grid_data, struct cell *cell_data, struct properties *phys_prop, float *phi_prev, float *S_u_correct);
 void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
 void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
 void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, float *resid, float *frp);
 void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
+void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop, float *phi_prev, float *S_u_correct);
 // Debug
 void write_coefficients(struct block *grid_data, struct coeff *fvm_coeff);
 
@@ -21,6 +22,10 @@ int main(void)
    int iter = 0;
    float resid = 1.0;
    float frp;
+
+   float *phi_prev;
+   float *S_u_correct;
+   int spatial_scheme = 0;
 
    // Define structs
    struct cell *cell_data;
@@ -42,11 +47,14 @@ int main(void)
    cell_data = (struct cell *)malloc(grid_data->np * sizeof(struct cell));
    fvm_coeff = (struct coeff *)malloc(grid_data->np * sizeof(struct coeff));
 
+   phi_prev    = (float *)malloc(grid_data->np * sizeof(float));
+   S_u_correct = (float *)malloc(grid_data->np * sizeof(float));
+
    // Perform grid calculations
    calc_grid(grid_data, cell_data);
 
    // Calculate physical property abbreviations 
-   initialize_properties(grid_data, cell_data, phys_prop);
+   initialize_properties(grid_data, cell_data, phys_prop, phi_prev, S_u_correct);
  
    // Calculate FVM coefficients for all cells (in the same manner)
    calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
@@ -54,10 +62,11 @@ int main(void)
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
-   write_coefficients(grid_data, fvm_coeff);
+//   write_coefficients(grid_data, fvm_coeff);
 
    // Begin outer loop
    while(resid >= solv_settings->tol) 
+//   while(iter < 3)
    {
       // Solve the system via jacobi iteration
       solve_jacobi(grid_data, fvm_coeff, cell_data);
@@ -74,6 +83,11 @@ int main(void)
       resid = resid/frp;
       iter++;
       printf("*** Iteration: %5i; Residual: %6.4f; Normalization (frp): %6.4f\n",iter, resid, frp);
+     
+      if(spatial_scheme == 1)
+      {
+         calc_correction(grid_data, fvm_coeff, phys_prop, phi_prev, S_u_correct);
+      }
    }
 
    // Write the results to a file

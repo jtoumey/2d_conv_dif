@@ -2,7 +2,7 @@
 #include "struct_list.h"
 
 
-void initialize_properties(struct block *grid_data, struct cell *cell_data, struct properties *phys_prop)
+void initialize_properties(struct block *grid_data, struct cell *cell_data, struct properties *phys_prop, float *phi_prev, float *S_u_correct)
 {
    int ii;
 
@@ -22,6 +22,9 @@ void initialize_properties(struct block *grid_data, struct cell *cell_data, stru
    for(ii=0;ii<grid_data->np;ii++)
    {
       cell_data[ii].phi = 0.0;
+      
+      phi_prev[ii]    = 0.0;
+      S_u_correct[ii] = 0.0;
    }
 
 }

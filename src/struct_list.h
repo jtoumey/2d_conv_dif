@@ -40,5 +40,6 @@ struct properties
 // Solver and numerical method information
 struct settings
 {
+   int spatial_scheme;
    float tol;
 };
