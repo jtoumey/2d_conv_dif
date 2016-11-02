@@ -11,7 +11,7 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
 void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
 void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, float *resid, float *frp);
 void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
-void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop, float *phi_prev, float *S_u_correct);
+void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, struct properties *phys_prop, float *phi_prev, float *S_u_correct);
 // Debug
 void write_coefficients(struct block *grid_data, struct coeff *fvm_coeff);
 
@@ -25,7 +25,7 @@ int main(void)
 
    float *phi_prev;
    float *S_u_correct;
-   int spatial_scheme = 0;
+//   int spatial_scheme = 1;
 
    // Define structs
    struct cell *cell_data;
@@ -42,6 +42,8 @@ int main(void)
    // Read data from the input file
    read_input(grid_data, phys_prop, solv_settings);
    grid_data->np = grid_data->nx*grid_data->ny; // Calculate total number of cells in the domain
+
+   printf("spatial_scheme = %i\n", solv_settings->spatial_scheme);
 
    // Allocate memory for 1D arrays of structs for cell and coefficient data structures
    cell_data = (struct cell *)malloc(grid_data->np * sizeof(struct cell));
@@ -62,11 +64,11 @@ int main(void)
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
-//   write_coefficients(grid_data, fvm_coeff);
+   write_coefficients(grid_data, fvm_coeff);
 
    // Begin outer loop
+   printf("tol = %12.8f\n\n", solv_settings->tol);
    while(resid >= solv_settings->tol) 
-//   while(iter < 3)
    {
       // Solve the system via jacobi iteration
       solve_jacobi(grid_data, fvm_coeff, cell_data);
@@ -82,11 +84,11 @@ int main(void)
       // Calculate normalized global residual, increment the iteration count, print the iteration information
       resid = resid/frp;
       iter++;
-      printf("*** Iteration: %5i; Residual: %6.4f; Normalization (frp): %6.4f\n",iter, resid, frp);
+      printf("*** Iteration: %5i; Residual: %12.8f; Normalization (frp): %12.8f\n",iter, resid, frp);
      
-      if(spatial_scheme == 1)
+      if(solv_settings->spatial_scheme == 1)
       {
-         calc_correction(grid_data, fvm_coeff, phys_prop, phi_prev, S_u_correct);
+         calc_correction(grid_data, fvm_coeff, cell_data, phys_prop, phi_prev, S_u_correct);
       }
    }
 
