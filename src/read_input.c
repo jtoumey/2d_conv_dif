@@ -89,6 +89,12 @@ void read_input(struct block *grid_data, struct properties *phys_prop, struct se
          sscanf(buffer_ptr_reset, "%*s %f", &solv_settings->tol);
          // printf("the tolerance: %f\n", solv_settings->tol);
       }
+      else if( !strncmp(var_name, "spatial_scheme", BUFFER_SIZE))
+      {
+         // printf("   buffer matches tolerance!\n");
+         sscanf(buffer_ptr_reset, "%*s %d", &solv_settings->spatial_scheme);
+         // printf("the tolerance: %f\n", solv_settings->tol);
+      }
       else
       {
          printf("*** Warning: Parameter %20s does not match any input parameters required by the code. ***\n", var_name);
