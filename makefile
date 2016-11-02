@@ -6,10 +6,12 @@ CC       = gcc
 # compiler flags
 #CFLAGS   = -std=c99 -Wall -I.
 #CFLAGS   = -Wall -Wextra
+CFLAGS = -pg
 
 LINKER   = gcc -o
 # linking flags
 #LFLAGS   = -Wall -I. -lm
+LFLAGS = -pg
 
 SRCDIR   = src
 OBJDIR   = obj
