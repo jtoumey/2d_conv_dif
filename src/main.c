@@ -1,18 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "struct_list.h"
-
-// Declarations of function prototypes
-void read_input(struct block *grid_data, struct properties *phys_prop, struct settings *solv_setting);
-void calc_grid(struct block *grid_data, struct cell *cell_data);
-void initialize_properties(struct block *grid_data, struct cell *cell_data, struct properties *phys_prop);
-void calc_fvm_coeff(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
-void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop);
-void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
-void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, float *resid, float *frp);
-void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data);
-// Debug
-void write_coefficients(struct block *grid_data, struct coeff *fvm_coeff);
+#include "function_prototypes.h"
 
 // Main driver function
 int main(void)
@@ -37,10 +26,14 @@ int main(void)
    // Read data from the input file
    read_input(grid_data, phys_prop, solv_settings);
    grid_data->np = grid_data->nx*grid_data->ny; // Calculate total number of cells in the domain
+ 
+   grid_data->nxp = grid_data->nx + 2;
+   grid_data->nyp = grid_data->ny + 2;
+   grid_data->npp = grid_data->nxp * grid_data->nyp;
 
    // Allocate memory for 1D arrays of structs for cell and coefficient data structures
-   cell_data = (struct cell *)malloc(grid_data->np * sizeof(struct cell));
-   fvm_coeff = (struct coeff *)malloc(grid_data->np * sizeof(struct coeff));
+   cell_data = (struct cell *)malloc(grid_data->npp * sizeof(struct cell));
+   fvm_coeff = (struct coeff *)malloc(grid_data->npp * sizeof(struct coeff));
 
    // Perform grid calculations
    calc_grid(grid_data, cell_data);
@@ -50,7 +43,7 @@ int main(void)
  
    // Calculate FVM coefficients for all cells (in the same manner)
    calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
- 
+
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 

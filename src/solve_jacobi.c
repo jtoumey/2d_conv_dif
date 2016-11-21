@@ -3,11 +3,12 @@
 
 void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data)
 {
-   int ii;
+   int ii, jj, kk;
    float phi_adj_W, phi_adj_E, phi_adj_S, phi_adj_N;
    float eps = 0.0; // 10e-8;
 
    // Loop through all cells
+/*
    for(ii = 0; ii < grid_data->np; ii++)
    {
       // As we step through the cells, identify those on the boundary and set the values of \phi beyond the boundary to 0.0
@@ -51,10 +52,23 @@ void solve_jacobi(struct block *grid_data, struct coeff *fvm_coeff, struct cell 
       {
          phi_adj_N = cell_data[ii+1].phi;
       }
-
+*/
       // Now perform the actual Jacobi iteration step
-      cell_data[ii].phi = (fvm_coeff[ii].a_W * phi_adj_W + fvm_coeff[ii].a_E * phi_adj_E + fvm_coeff[ii].a_S * phi_adj_S + fvm_coeff[ii].a_N * phi_adj_N + fvm_coeff[ii].S_u)/(fvm_coeff[ii].a_P + eps);
+   // Loop over interior cells only
+   for(ii=1; ii<grid_data->nx+1; ii++)
+   {
+      for(jj = 1; jj < grid_data->ny+1; jj++)
+      {
+         kk = ii*grid_data->nyp + jj;
 
+         phi_adj_W = cell_data[kk-grid_data->nyp].phi;
+         phi_adj_E = cell_data[kk+grid_data->nyp].phi;
+         phi_adj_S = cell_data[kk-1].phi;
+         phi_adj_N = cell_data[kk+1].phi;
+
+         cell_data[kk].phi = (fvm_coeff[kk].a_W * phi_adj_W + fvm_coeff[kk].a_E * phi_adj_E + fvm_coeff[kk].a_S * phi_adj_S + fvm_coeff[kk].a_N * phi_adj_N + fvm_coeff[kk].S_u)/(fvm_coeff[kk].a_P + eps);
+      }
    }
+
 
 }
