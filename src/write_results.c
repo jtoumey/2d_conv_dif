@@ -12,11 +12,12 @@ void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell
 
    // Print the value of \phi at each cell center in the domain
    fptr_output = fopen("phi.dat","w");
-   for(ii = 0; ii < grid_data->nx; ii++)
+   for(ii = 1; ii < grid_data->nx+1; ii++)
    {
-      for(jj = 0; jj < grid_data->ny; jj++)
+      for(jj = 1; jj < grid_data->ny + 1; jj++)
       {
-         kk = ii*grid_data->ny + jj;
+         // Cells are in a 1D array, so convert the (i, j) indices to a cell index
+         kk = ii*grid_data->nyp + jj;
          fprintf(fptr_output, "%12.6f\t%12.6f\t%12.6f\n", cell_data[kk].x, cell_data[kk].y, cell_data[kk].phi);
       }
       fprintf(fptr_output, "\n");

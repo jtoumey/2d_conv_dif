@@ -11,6 +11,7 @@ struct cell
 struct block
 {
    int nx, ny, np;
+   int nxp, nyp, npp;
    float xmin, xmax;
    float ymin, ymax;
    // Boundary condition

@@ -4,7 +4,7 @@
 
 void initialize_properties(struct block *grid_data, struct cell *cell_data, struct properties *phys_prop, float *phi_prev, float *S_u_correct)
 {
-   int ii;
+   int ii, jj, kk;
 
    // Specify cell face areas
    phys_prop->area_west  = grid_data->dy; 
@@ -19,12 +19,36 @@ void initialize_properties(struct block *grid_data, struct cell *cell_data, stru
    phys_prop->Dify = phys_prop->gamma/grid_data->dy;
  
    // Initialize the calculation for scalar \phi
-   for(ii=0;ii<grid_data->np;ii++)
+   // Loop over all cells (boundary and interior)
+   for(ii = 0; ii < grid_data->npp; ii++)
    {
       cell_data[ii].phi = 0.0;
       
       phi_prev[ii]    = 0.0;
       S_u_correct[ii] = 0.0;
+   }
+   // Overwrite West dummy cells with Dirichlet condition
+   for(ii = 0; ii < grid_data->nyp; ii++)
+   {
+      cell_data[ii].phi = grid_data->phi_A;
+   }
+
+   // Overwrite East dummy cells with Dirichlet condition
+   for(ii = grid_data->npp-grid_data->nyp-1; ii < grid_data->npp; ii++)
+   {
+      cell_data[ii].phi = grid_data->phi_B;
+   }
+
+   // Overwrite South dummy cells with Dirichlet condition
+   for(ii = 0; ii < grid_data->npp-1; ii+=grid_data->nyp)
+   {
+      cell_data[ii].phi = grid_data->phi_C;
+   }
+
+   // Overwrite North dummy cells with Dirichlet condition
+   for(ii = grid_data->nyp-1; ii < grid_data->npp; ii+=grid_data->nyp)
+   {
+      cell_data[ii].phi = grid_data->phi_D;
    }
 
 }

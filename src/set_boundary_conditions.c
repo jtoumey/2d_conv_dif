@@ -5,15 +5,15 @@
 
 void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop)
 {
-   int ii, kk;
+   int ii, jj, kk;
 
    float a_w_conv, a_e_conv, a_s_conv, a_n_conv;
    float a_w_diff, a_e_diff, a_s_diff, a_n_diff;
 
    // Adjust coefficients for West boundary, running S to N
-   for(ii = 0; ii < grid_data->ny; ii++)
+   for(ii = grid_data->nyp+1; ii < grid_data->nyp*2-1; ii++)
    {
-//      printf("\nWest boundary index: %d\n", ii);
+      //printf("\nWest boundary index: %d\n", ii);
       a_e_conv = max(0, -phys_prop->Fx * phys_prop->area_east); 
       a_e_diff = phys_prop->Difx * phys_prop->area_east;
 
@@ -25,10 +25,10 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    }
 
    // Adjust coefficients for South boundary, running W to E
-   kk = grid_data->np - grid_data->ny + 1;
-   for(ii = 0; ii < kk; ii += grid_data->ny)
+   kk = grid_data->npp - grid_data->nyp + 1; // index of solved cell just E of SE cell in the corner of the domain
+   for(ii = grid_data->nyp+1; ii < kk; ii += grid_data->nyp)
    {
- //     printf("\nSouth bndry index: %d\n", ii);
+      //printf("\nSouth bndry index: %d\n", ii);
       a_n_conv = max(0, -phys_prop->Fy * phys_prop->area_north); 
       a_n_diff = phys_prop->Dify * phys_prop->area_north;
 
@@ -40,9 +40,9 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    }
 
    // Adjust coefficients for North boundary, running W to E
-   for(ii = grid_data->ny - 1; ii < grid_data->np; ii += grid_data->ny)
+   for(ii = grid_data->nyp*2 - 2; ii < grid_data->npp-grid_data->nyp; ii += grid_data->nyp)
    {
-  //    printf("\nNorth bndry index: %d\n", ii);
+      //printf("\nNorth bndry index: %d\n", ii);
       a_s_conv = max(0, phys_prop->Fy * phys_prop->area_south);
       a_s_diff = phys_prop->Dify * phys_prop->area_south; 
 
@@ -54,10 +54,10 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    }
 
    // Adjust coefficients for East boundary, running S to N
-   kk = kk - 1;
-   for(ii = kk; ii < grid_data->np; ii++)
+   kk = grid_data->npp - 2*grid_data->nyp + 1; // index of solved cell in SE corner of the domain
+   for(ii = kk; ii < grid_data->npp - grid_data->nyp - 1; ii++)
    {
-   //   printf("\nEast bndry index: %d\n", ii);
+      //printf("\nEast bndry index: %d\n", ii);
       a_w_conv = max(0, phys_prop->Fx * phys_prop->area_west);
       a_w_diff = phys_prop->Difx * phys_prop->area_west;
 
@@ -68,10 +68,13 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
 
    }
 
-   // Now that all coefficients are up to date, we can compute a_P
-   for(ii = 0; ii < grid_data->np; ii++)
+   // Now that all coefficients are up to date, we can compute a_P for interior cells
+   for(ii = 1; ii < grid_data->nx+1; ii++)
    {
-      fvm_coeff[ii].a_P = fvm_coeff[ii].a_W + fvm_coeff[ii].a_E + fvm_coeff[ii].a_S + fvm_coeff[ii].a_N - fvm_coeff[ii].S_p;
-
+      for(jj = 1; jj < grid_data->ny+1; jj++)
+      {
+         kk = ii*grid_data->nyp + jj;
+         fvm_coeff[kk].a_P = fvm_coeff[kk].a_W + fvm_coeff[kk].a_E + fvm_coeff[kk].a_S + fvm_coeff[kk].a_N - fvm_coeff[kk].S_p;
+      }
    }
 }
