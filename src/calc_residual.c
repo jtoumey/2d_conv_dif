@@ -13,52 +13,6 @@ void calc_residual(struct block *grid_data, struct coeff *fvm_coeff, struct cell
    // Initialize the residual and normalization factor sums to zero for the current iteration
    *resid = 0.0;
    *frp   = 0.0;
-/*
-   // Loop through all cells
-   for(i = 0; i < grid_data->np; i++)
-   {
-      // As we step through the cells, identify those on the boundary and set the values of \phi beyond the boundary to 0.0
-
-      // Identify West cells 
-      if(i < grid_data->ny)
-      {
-         phi_adj_W = 0.0;
-      }
-      else
-      {
-         phi_adj_W = cell_data[i-grid_data->ny].phi;
-      }
-
-      // Identify East cells
-      if(i > (grid_data->np - grid_data->ny) && i < grid_data->np)
-      {
-         phi_adj_E = 0.0;
-      }
-      else
-      {
-         phi_adj_E = cell_data[i+grid_data->ny].phi;
-      }
-
-      // Identify South cells
-      if(i % grid_data->ny == 0) 
-      {
-         phi_adj_S = 0.0;
-      }
-      else
-      {
-         phi_adj_S = cell_data[i-1].phi;
-      }
-
-      // Identify North cells
-      if((i+1) % grid_data->ny == 0) 
-      {
-         phi_adj_N = 0.0;
-      }
-      else
-      {
-         phi_adj_N = cell_data[i+1].phi;
-      }
-*/
 
    // Loop over interior cells only
    for(ii=1; ii<grid_data->nx+1; ii++)

@@ -27,6 +27,7 @@ int main(void)
    read_input(grid_data, phys_prop, solv_settings);
    grid_data->np = grid_data->nx*grid_data->ny; // Calculate total number of cells in the domain
  
+   // Calculate padded ('p') indices
    grid_data->nxp = grid_data->nx + 2;
    grid_data->nyp = grid_data->ny + 2;
    grid_data->npp = grid_data->nxp * grid_data->nyp;

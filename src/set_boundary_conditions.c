@@ -13,7 +13,7 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    // Adjust coefficients for West boundary, running S to N
    for(ii = grid_data->nyp+1; ii < grid_data->nyp*2-1; ii++)
    {
-      printf("\nWest boundary index: %d\n", ii);
+      //printf("\nWest boundary index: %d\n", ii);
       a_e_conv = max(0, -phys_prop->Fx * phys_prop->area_east); 
       a_e_diff = phys_prop->Difx * phys_prop->area_east;
 
@@ -25,10 +25,10 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    }
 
    // Adjust coefficients for South boundary, running W to E
-   kk = grid_data->npp - grid_data->nyp + 1;
+   kk = grid_data->npp - grid_data->nyp + 1; // index of solved cell just E of SE cell in the corner of the domain
    for(ii = grid_data->nyp+1; ii < kk; ii += grid_data->nyp)
    {
-      printf("\nSouth bndry index: %d\n", ii);
+      //printf("\nSouth bndry index: %d\n", ii);
       a_n_conv = max(0, -phys_prop->Fy * phys_prop->area_north); 
       a_n_diff = phys_prop->Dify * phys_prop->area_north;
 
@@ -42,7 +42,7 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    // Adjust coefficients for North boundary, running W to E
    for(ii = grid_data->nyp*2 - 2; ii < grid_data->npp-grid_data->nyp; ii += grid_data->nyp)
    {
-      printf("\nNorth bndry index: %d\n", ii);
+      //printf("\nNorth bndry index: %d\n", ii);
       a_s_conv = max(0, phys_prop->Fy * phys_prop->area_south);
       a_s_diff = phys_prop->Dify * phys_prop->area_south; 
 
@@ -54,10 +54,10 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    }
 
    // Adjust coefficients for East boundary, running S to N
-   kk = grid_data->npp - 2*grid_data->nyp + 1;
+   kk = grid_data->npp - 2*grid_data->nyp + 1; // index of solved cell in SE corner of the domain
    for(ii = kk; ii < grid_data->npp - grid_data->nyp - 1; ii++)
    {
-      printf("\nEast bndry index: %d\n", ii);
+      //printf("\nEast bndry index: %d\n", ii);
       a_w_conv = max(0, phys_prop->Fx * phys_prop->area_west);
       a_w_diff = phys_prop->Difx * phys_prop->area_west;
 

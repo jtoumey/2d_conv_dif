@@ -47,13 +47,5 @@ void initialize_properties(struct block *grid_data, struct cell *cell_data, stru
    {
       cell_data[ii].phi = grid_data->phi_D;
    }
-   // Loop over interior cells only
-   for(ii=1; ii<grid_data->nx+1; ii++)
-   {
-      for(jj = 1; jj < grid_data->ny+1; jj++)
-      {
-         kk = ii*grid_data->nyp + jj;
-         cell_data[kk].phi = 0.134;
-      }
-   }
+
 }
