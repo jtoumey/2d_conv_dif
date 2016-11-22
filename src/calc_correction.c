@@ -10,6 +10,13 @@ void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct ce
    float theta_x, theta_y;
    float correction_w, correction_e, correction_s, correction_n;
    float correction_cds, correction_uds;
+
+   // Store the previous iterations's solution
+   for(i = 0; i < grid_data->npp; i++)
+   {
+      phi_prev[i] = cell_data[i].phi;
+   }
+
    // Loop over interior cells only
    for(i=1; i<grid_data->nx+1; i++)
    {
@@ -17,14 +24,6 @@ void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct ce
       {
          k = i*grid_data->nyp + j;
 
-  // for(i = 1; i < grid_data->nx - 1; i++)
- //  {
- //     for(j = 1; j < grid_data->ny - 1; j++)
- //     {
-//         phi_prev[k] = cell_data[k].phi;
-
-  //       k = i*grid_data->ny + j;
-         phi_prev[k] = cell_data[k].phi;
          // remove the previous iteration's correction from the FVM coefficient array
          fvm_coeff[k].S_u -= S_u_correct[k];
 
@@ -56,7 +55,7 @@ void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct ce
          S_u_correct[k] = correction_w + correction_e + correction_s + correction_n;
         
           
- //        printf("correction at gp %4i = %12.9f\n", k, S_u_correct[i]);
+//        printf("correction at gp %4i = %12.9f\n", k, S_u_correct[k]);
 
          fvm_coeff[k].S_u += S_u_correct[k];
 //         write_coefficients(grid_data, fvm_coeff);
