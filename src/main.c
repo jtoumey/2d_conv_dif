@@ -42,8 +42,8 @@ int main(void)
    cell_data = (struct cell *)malloc(grid_data->npp * sizeof(struct cell));
    fvm_coeff = (struct coeff *)malloc(grid_data->npp * sizeof(struct coeff));
 
-   phi_prev    = (float *)malloc(grid_data->np * sizeof(float));
-   S_u_correct = (float *)malloc(grid_data->np * sizeof(float));
+   phi_prev    = (float *)malloc(grid_data->npp * sizeof(float));
+   S_u_correct = (float *)malloc(grid_data->npp * sizeof(float));
 
    // Perform grid calculations
    calc_grid(grid_data, cell_data);
