@@ -35,6 +35,7 @@ void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct ce
  
 //         printf("CDS D-C*: %8.4f; UDS D-C*: %8.4f; Ttl Crtn: %8.4f\n", correction_cds, correction_uds, correction_w);
 
+         // East correction
          correction_cds = 0.5*(phi_prev[k] + phi_prev[k+grid_data->nyp]);
          correction_uds = phi_prev[k-grid_data->nyp]*theta_x + phi_prev[k]*(1-theta_x);
          correction_e   = phys_prop->Fx*phys_prop->area_east*(correction_cds - correction_uds);

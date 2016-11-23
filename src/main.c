@@ -57,7 +57,7 @@ int main(void)
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
-   write_coefficients(grid_data, fvm_coeff);
+  // write_coefficients(grid_data, fvm_coeff);
 
    // Begin outer loop
    printf("tol = %12.8f\n\n", solv_settings->tol);

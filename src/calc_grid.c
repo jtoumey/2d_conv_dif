@@ -20,6 +20,7 @@ void calc_grid(struct block *grid_data, struct cell *cell_data)
          // Store the cell center of each cell
          cell_data[kk].x = (ii - 0.5)*grid_data->dx;
          cell_data[kk].y = (jj - 0.5)*grid_data->dy;
+
       }
    }
    
