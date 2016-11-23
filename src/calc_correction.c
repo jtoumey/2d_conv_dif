@@ -31,25 +31,25 @@ void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct ce
 
          correction_cds = 0.5*(phi_prev[k] + phi_prev[k-grid_data->nyp]);
          correction_uds = phi_prev[k]*theta_x + phi_prev[k+grid_data->nyp]*(1-theta_x);
-         correction_w   = phys_prop->Fx*phys_prop->area_west*(correction_cds - correction_uds);
+         correction_w   = phys_prop->Fx*phys_prop->area_west*(correction_uds - correction_cds);
  
 //         printf("CDS D-C*: %8.4f; UDS D-C*: %8.4f; Ttl Crtn: %8.4f\n", correction_cds, correction_uds, correction_w);
 
          // East correction
          correction_cds = 0.5*(phi_prev[k] + phi_prev[k+grid_data->nyp]);
          correction_uds = phi_prev[k-grid_data->nyp]*theta_x + phi_prev[k]*(1-theta_x);
-         correction_e   = phys_prop->Fx*phys_prop->area_east*(correction_cds - correction_uds);
+         correction_e   = phys_prop->Fx*phys_prop->area_east*(correction_uds - correction_cds);
 //         correction_e   = phys_prop->Fx*phys_prop->area_east*(0.5*(phi_prev[k] + phi_prev[k+grid_data->ny]) - (phi_prev[k-grid_data->ny]*theta_x + phi_prev[k]*(1-theta_x)));
 
          theta_y = max(0, phys_prop->Fy/fabs(phys_prop->Fy));
 
          correction_cds = 0.5*(phi_prev[k-1] + phi_prev[k]);
          correction_uds = phi_prev[k-1]*theta_y + phi_prev[k]*(1-theta_y);
-         correction_s   = phys_prop->Fy*phys_prop->area_south*(correction_cds - correction_uds);
+         correction_s   = phys_prop->Fy*phys_prop->area_south*(correction_uds - correction_cds);
        //  correction_s = phys_prop->Fy*phys_prop->area_south*(0.5*(phi_prev[k-1] + phi_prev[k]) - (phi_prev[k-1]*theta_y + phi_prev[k]*(1-theta_y)));
          correction_cds = 0.5*(phi_prev[k+1] + phi_prev[k]);
          correction_uds = phi_prev[k]*theta_y + phi_prev[k+1]*(1-theta_y);
-         correction_n   = phys_prop->Fy*phys_prop->area_north*(correction_cds - correction_uds);
+         correction_n   = phys_prop->Fy*phys_prop->area_north*(correction_uds - correction_cds);
 //         correction_n = phys_prop->Fy*phys_prop->area_north*(0.5*(phi_prev[k+1] + phi_prev[k]) - (phi_prev[k]*theta_y + phi_prev[k+1]*(1-theta_y)));
 ;
 
