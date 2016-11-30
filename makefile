@@ -10,6 +10,7 @@ CC       = gcc
 
 LINKER   = gcc -o
 # linking flags
+LFLAGS   = -lm
 #LFLAGS   = -Wall -I. -lm
 #LFLAGS = -pg
 
@@ -21,10 +22,10 @@ SOURCES  := $(wildcard $(SRCDIR)/*.c)
 INCLUDES := $(wildcard $(SRCDIR)/*.h)
 OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 rm       = rm -f
-
+#	@$(LINKER) $@ $(LFLAGS) $(OBJECTS)
 
 $(BINDIR)/$(TARGET): $(OBJECTS)
-	@$(LINKER) $@ $(LFLAGS) $(OBJECTS)
+	@$(LINKER) $@ $(OBJECTS) $(LFLAGS) 
 	@echo "Linking complete!"
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
