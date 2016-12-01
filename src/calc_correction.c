@@ -27,39 +27,38 @@ void calc_correction(struct block *grid_data, struct coeff *fvm_coeff, struct ce
          // remove the previous iteration's correction from the FVM coefficient array
          fvm_coeff[k].S_u -= S_u_correct[k];
 
+         // Calculate factor theta_x to determine the flow direction in x-direction
          theta_x = max(0, phys_prop->Fx/fabs(phys_prop->Fx));
 
+         // West correction
          correction_cds = 0.5*(phi_prev[k] + phi_prev[k-grid_data->nyp]);
          correction_uds = phi_prev[k]*theta_x + phi_prev[k+grid_data->nyp]*(1-theta_x);
          correction_w   = phys_prop->Fx*phys_prop->area_west*(correction_uds - correction_cds);
  
-//         printf("CDS D-C*: %8.4f; UDS D-C*: %8.4f; Ttl Crtn: %8.4f\n", correction_cds, correction_uds, correction_w);
-
          // East correction
          correction_cds = 0.5*(phi_prev[k] + phi_prev[k+grid_data->nyp]);
          correction_uds = phi_prev[k-grid_data->nyp]*theta_x + phi_prev[k]*(1-theta_x);
          correction_e   = phys_prop->Fx*phys_prop->area_east*(correction_uds - correction_cds);
-//         correction_e   = phys_prop->Fx*phys_prop->area_east*(0.5*(phi_prev[k] + phi_prev[k+grid_data->ny]) - (phi_prev[k-grid_data->ny]*theta_x + phi_prev[k]*(1-theta_x)));
 
+         // Calculate factor theta_y to determine the flow direction in y-direction
          theta_y = max(0, phys_prop->Fy/fabs(phys_prop->Fy));
 
+         // South correction
          correction_cds = 0.5*(phi_prev[k-1] + phi_prev[k]);
          correction_uds = phi_prev[k-1]*theta_y + phi_prev[k]*(1-theta_y);
          correction_s   = phys_prop->Fy*phys_prop->area_south*(correction_uds - correction_cds);
-       //  correction_s = phys_prop->Fy*phys_prop->area_south*(0.5*(phi_prev[k-1] + phi_prev[k]) - (phi_prev[k-1]*theta_y + phi_prev[k]*(1-theta_y)));
+
+         // North correction
          correction_cds = 0.5*(phi_prev[k+1] + phi_prev[k]);
          correction_uds = phi_prev[k]*theta_y + phi_prev[k+1]*(1-theta_y);
          correction_n   = phys_prop->Fy*phys_prop->area_north*(correction_uds - correction_cds);
-//         correction_n = phys_prop->Fy*phys_prop->area_north*(0.5*(phi_prev[k+1] + phi_prev[k]) - (phi_prev[k]*theta_y + phi_prev[k+1]*(1-theta_y)));
-;
 
+         // Sum the corrections from each cardinal direction
          S_u_correct[k] = correction_w + correction_e + correction_s + correction_n;
         
-          
-//        printf("correction at gp %4i = %12.9f\n", k, S_u_correct[k]);
-
+         // Add the correction to the source term in the FVM coefficient matrix
          fvm_coeff[k].S_u += S_u_correct[k];
-//         write_coefficients(grid_data, fvm_coeff);
+
       }
    }
 

@@ -13,7 +13,6 @@ int main(void)
 
    float *phi_prev;
    float *S_u_correct;
-//   int spatial_scheme = 1;
 
    // Define structs
    struct cell *cell_data;
@@ -57,10 +56,9 @@ int main(void)
    // Overwrite boundary cell coefficients to apply boundary conditions
    set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
 
-  // write_coefficients(grid_data, fvm_coeff);
+   // write_coefficients(grid_data, fvm_coeff);
 
    // Begin outer loop
-   printf("tol = %12.8f\n\n", solv_settings->tol);
    while(resid >= solv_settings->tol) 
    {
       // Solve the system via jacobi iteration

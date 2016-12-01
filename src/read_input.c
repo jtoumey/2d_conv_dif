@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "struct_list.h"
 #include <string.h>
+#include <stdlib.h>
 
 #define BUFFER_SIZE 100
 
@@ -18,6 +19,7 @@ void read_input(struct block *grid_data, struct properties *phys_prop, struct se
    if(fptr_input == NULL)
    { 
       printf("*** Error opening the input file. ***\n");
+      exit(EXIT_FAILURE);
    }
 
    // Loop over the lines in the file, reading, testing, and saving each
@@ -99,6 +101,7 @@ void read_input(struct block *grid_data, struct properties *phys_prop, struct se
       {
          printf("*** Warning: Parameter %20s does not match any input parameters required by the code. ***\n", var_name);
          printf("***          Please examine your input file.                                          ***\n");
+         exit(EXIT_FAILURE);
       }
    }
    if(feof(fptr_input))

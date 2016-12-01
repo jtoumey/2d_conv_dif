@@ -25,7 +25,6 @@ void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell
       fprintf(fptr_output, "\n");
    }
    fclose(fptr_output);
- 
 
 
    // Print the value of \phi along the diagonal to examine numerical viscosity
@@ -45,8 +44,9 @@ void write_results(struct block *grid_data, struct coeff *fvm_coeff, struct cell
    plane_idx = floor(grid_data->nx/2)*grid_data->nyp + 1;
    for(ii = plane_idx; ii < plane_idx + grid_data->ny; ii++)
    {
+
       fprintf(fptr_plane, "%12.6f\t%12.6f\n", cell_data[ii].phi, cell_data[ii].y);
-//      fprintf(fptr_plane, "%12.6f\t%12.6f\t%12.6f\n", cell_data[ii].x, cell_data[ii].y, cell_data[ii].phi);
+
    }
    fclose(fptr_plane);
 }
