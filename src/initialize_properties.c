@@ -6,6 +6,8 @@ void initialize_properties(struct block *grid_data, struct cell *cell_data, stru
 {
    int ii, jj, kk;
 
+   int neumann = 1;
+
    // Specify cell face areas
    phys_prop->area_west  = grid_data->dy; 
    phys_prop->area_east  = grid_data->dy; 
@@ -45,10 +47,20 @@ void initialize_properties(struct block *grid_data, struct cell *cell_data, stru
       cell_data[ii].phi = grid_data->phi_C;
    }
 
+   if(neumann == 0)
+   {
    // Overwrite North dummy cells with Dirichlet condition
    for(ii = grid_data->nyp-1; ii < grid_data->npp; ii+=grid_data->nyp)
    {
       cell_data[ii].phi = grid_data->phi_D;
+   }
+   }
+   else if(neumann == 1)
+   {
+   for(ii = grid_data->nyp-1; ii < grid_data->npp; ii+=grid_data->nyp)
+   {
+      cell_data[ii].phi = cell_data[ii-1].phi;
+   }
    }
 
 }

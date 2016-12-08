@@ -42,8 +42,8 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
    }
 
 // neumann test infrastructure
-if(neumann == 0)
-{
+   if(neumann == 0)
+   {
    // Adjust coefficients for North boundary, running W to E
    for(ii = grid_data->nyp*2 - 2; ii < grid_data->npp-grid_data->nyp; ii += grid_data->nyp)
    {
@@ -57,8 +57,8 @@ if(neumann == 0)
       fvm_coeff[ii].S_p = fvm_coeff[ii].S_p + -(2*phys_prop->Dify*phys_prop->area_north + max(0, -phys_prop->Fy * phys_prop->area_south));
 
    }
-}
-   if(neumann == 1)
+   }
+   else if(neumann == 1)
    {
 
    // Adjust coefficients for North boundary, running W to E
@@ -70,7 +70,7 @@ if(neumann == 0)
 
       fvm_coeff[ii].a_S = a_s_conv + a_s_diff;
       fvm_coeff[ii].a_N = 0.0;
-      fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Dify * phys_prop->area_north * cell_data[ii+1].phi + cell_data[ii+1].phi * max(0, -phys_prop->Fy * phys_prop->area_north);
+      fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Dify * phys_prop->area_north * cell_data[ii+1].phi + cell_data[ii+1].phi * max(0, phys_prop->Fy * phys_prop->area_north);
       fvm_coeff[ii].S_p = fvm_coeff[ii].S_p + -(2*phys_prop->Dify*phys_prop->area_north + max(0, -phys_prop->Fy * phys_prop->area_south));
 
    }
