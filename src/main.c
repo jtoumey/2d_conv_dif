@@ -11,6 +11,9 @@ int main(void)
    float resid = 1.0;
    float frp;
 
+   // neumann test
+   int neumann = 1;
+
    float *phi_prev;
    float *S_u_correct;
 
@@ -54,7 +57,7 @@ int main(void)
    calc_fvm_coeff(grid_data, fvm_coeff, phys_prop);
 
    // Overwrite boundary cell coefficients to apply boundary conditions
-   set_boundary_conditions(grid_data, fvm_coeff, phys_prop);
+   set_boundary_conditions(grid_data, fvm_coeff, cell_data, phys_prop);
 
    // write_coefficients(grid_data, fvm_coeff);
 
@@ -81,6 +84,17 @@ int main(void)
       {
          calc_correction(grid_data, fvm_coeff, cell_data, phys_prop, phi_prev, S_u_correct);
       }
+
+   if(neumann == 1)
+   {
+      // Adjust coefficients for North boundary, running W to E
+      for(ii = grid_data->nyp*2 - 2; ii < grid_data->npp-grid_data->nyp; ii += grid_data->nyp)
+      {
+         //printf("\nNorth bndry index: %d\n", ii);
+         cell_data[ii+1].phi = cell_data[ii].phi;
+      }
+   }
+
    }
 
    // Write the results to a file

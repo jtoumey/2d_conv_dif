@@ -3,12 +3,14 @@
 // Calculate the maximum of two inputs (C does not include this natively)
 #define max(X,Y) (((X) > (Y)) ? (X) : (Y))
 
-void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct properties *phys_prop)
+void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, struct cell *cell_data, struct properties *phys_prop)
 {
    int ii, jj, kk;
 
    float a_w_conv, a_e_conv, a_s_conv, a_n_conv;
    float a_w_diff, a_e_diff, a_s_diff, a_n_diff;
+
+   int neumann = 1;
 
    // Adjust coefficients for West boundary, running S to N
    for(ii = grid_data->nyp+1; ii < grid_data->nyp*2-1; ii++)
@@ -39,6 +41,9 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
 
    }
 
+// neumann test infrastructure
+if(neumann == 0)
+{
    // Adjust coefficients for North boundary, running W to E
    for(ii = grid_data->nyp*2 - 2; ii < grid_data->npp-grid_data->nyp; ii += grid_data->nyp)
    {
@@ -50,6 +55,25 @@ void set_boundary_conditions(struct block *grid_data, struct coeff *fvm_coeff, s
       fvm_coeff[ii].a_N = 0.0;
       fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Dify * phys_prop->area_north * grid_data->phi_D + grid_data->phi_D * max(0, -phys_prop->Fy * phys_prop->area_north);
       fvm_coeff[ii].S_p = fvm_coeff[ii].S_p + -(2*phys_prop->Dify*phys_prop->area_north + max(0, -phys_prop->Fy * phys_prop->area_south));
+
+   }
+}
+   if(neumann == 1)
+   {
+
+   // Adjust coefficients for North boundary, running W to E
+   for(ii = grid_data->nyp*2 - 2; ii < grid_data->npp-grid_data->nyp; ii += grid_data->nyp)
+   {
+      //printf("\nNorth bndry index: %d\n", ii);
+      a_s_conv = max(0, phys_prop->Fy * phys_prop->area_south);
+      a_s_diff = phys_prop->Dify * phys_prop->area_south; 
+
+      fvm_coeff[ii].a_S = a_s_conv + a_s_diff;
+      fvm_coeff[ii].a_N = 0.0;
+      fvm_coeff[ii].S_u = fvm_coeff[ii].S_u + 2*phys_prop->Dify * phys_prop->area_north * cell_data[ii+1].phi + cell_data[ii+1].phi * max(0, -phys_prop->Fy * phys_prop->area_north);
+      fvm_coeff[ii].S_p = fvm_coeff[ii].S_p + -(2*phys_prop->Dify*phys_prop->area_north + max(0, -phys_prop->Fy * phys_prop->area_south));
+
+   }
 
    }
 
