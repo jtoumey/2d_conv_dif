@@ -14,6 +14,8 @@ int main(void)
    float *phi_prev;
    float *S_u_correct;
 
+   int neumann_bc = 1;
+
    // Define structs
    struct cell *cell_data;
    struct block *grid_data;
@@ -80,6 +82,15 @@ int main(void)
       if(solv_settings->spatial_scheme == 1)
       {
          calc_correction(grid_data, fvm_coeff, cell_data, phys_prop, phi_prev, S_u_correct);
+      }
+
+      if(neumann_bc == 1)
+      {
+         for(ii = grid_data->nyp*2 - 2; ii < grid_data->npp-grid_data->nyp; ii += grid_data->nyp)
+         {
+            cell_data[ii+1].phi = cell_data[ii].phi;
+         }
+   
       }
    }
 
