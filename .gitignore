@@ -10,6 +10,7 @@
 *.aux
 *.log
 *.txt
+*.toc
 
 # Input 
 *.inp
