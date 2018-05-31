@@ -1,8 +1,55 @@
 \documentclass{article}
 
+\usepackage[margin=1in]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{array}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+
+
+
+% Header Components
+\usepackage{lastpage}
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} 
+\fancyhead[L]{2d\_conv\_dif} 
+\fancyhead[C]{}
+\fancyhead[R]{Julian M.\ Toumey}
+\fancyfoot[L]{} 
+\fancyfoot[C]{\thepage\ of 7}
+%\pageref{LastPage} 
+\fancyfoot[R]{} 
+\renewcommand{\headrulewidth}{0.4pt} % Header underlines
+\renewcommand{\footrulewidth}{0.4pt} % Footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
 
 
 % Custom command definitions
@@ -20,13 +67,114 @@
 \newcommand{\divc}[1]{\mathrm{div}\!\left(#1\right)}
 \newcommand{\gradc}[1]{\mathrm{grad}\!\left(#1\right)}
 
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+ % Thick bottom horizontal rule
 \title{Two-Dimensional Convection-Diffusion}
 \author{J.\ Toumey}
-\date{Fall 2016}
+\date{Fall 2016 \\ \horrule{1.5pt} \\[0.05cm]}
+
+
+
 
 
 \begin{document}
 \maketitle
+
+\thispagestyle{empty}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This document describes the code \texttt{2d\_conv\_dif}, a two-dimensional, steady-state, finite volume solver for the conservation equation of scalar transport.
+The code works with structured Cartesian grids for which the velocity field is known \textit{a priori}.
+
+
+%
+%
+%
+\section{Usage Instructions}
+This section covers obtaining the source code, compiling the source, configuring an input file, running the code, and analyzing the output.
+
+\subsection{Compiling from Source}
+For version control, the source code repository resides on Github. The following steps describe command line instructions for creating a binary.
+
+\begin{enumerate}
+   \item Clone a copy of the source code: \texttt{git clone https://github.com/jtoumey/2d\_conv\_dif.git}
+   \item Create an \texttt{obj} directory for object files in the code directory: \texttt{mkdir obj}
+   \item Create a \texttt{bin} directory for the binary in the code directory: \texttt{mkdir bin}
+   \item Compile the source by invoking the \textit{makefile}: \texttt{make}
+\end{enumerate}
+
+Now, the binary \texttt{2d\_conv\_dif} will be in \texttt{/2d\_conv\_dif/bin/}.
+
+\subsection{Running the Code}
+
+\begin{enumerate}
+    \item Prepare an input file called \textit{input.inp} in the following manner:
+\begin{lstlisting}
+nx             100
+ny             100
+xmin           0.0
+xmax           1.0
+ymin           0.0
+ymax           1.0 
+phi_A          100
+phi_B          0.0 
+phi_C          0.0
+phi_D          100
+rho            1.0
+gamma          0.02
+u              0.74
+v              0.5
+tol            0.000001
+spatial_scheme 0
+\end{lstlisting}
+    \item Place the input file in the same directory as that from which you run the code
+    \item Run the code: \texttt{./2d\_conv\_dif}
+\end{enumerate}
+
+\subsection{Interpreting the Output}
+At the end of each run, the code produces two output files that contain relevant solution information.
+
+\begin{enumerate}
+    \item \textit{phi.dat}: This file contains the value of the transported scalar at each cell center in the domain. 
+    The file contains blocks of data for a fixed $x$ index with the values of \textit{phi} ($\phi$) for the $y$ indices in the $y$-direction. 
+    The listing below shows the general structure. 
+    Note that there is a blank line between each ``column'' of data to facilitate interpretation and plotting in \texttt{gnuplot}.
+    \begin{lstlisting}
+x1    y1    phi(x1, y1)
+x1    y2    phi(x1, y2)
+...
+x1    yn    phi(x1, yn)
+
+x2    y1    phi(x2, y1)
+x2    y2    phi(x2, y2)
+...
+x2    yn    phi(x2, yn)
+
+...
+
+xn    y1    phi(xn, y1)
+...
+xn    yn    phi(xn, yn)\end{lstlisting}
+   \item \textit{phi\_diag.dat}: This file contains two columns. The first is the $y$ location of cell centers along a diagonal line running from the Northwest corner to the Southeast corner of the domain. 
+   The second column contains the value of \textit{phi} ($\phi$) at the corresponding cell center.
+   \begin{lstlisting}
+y_NW    phi_NW
+...
+y_SE    phi_SE\end{lstlisting}
+   In the work of Ferziger and Peri\'{c}, the authors discuss how advecting a scalar at an angle oblique to the Cartesian grid lines smears the solution, revealing inherent numerical diffusion \cite{fer_per}.
+   For comparison purposes, this code writes values along the diagonal in order to determine the degree with which the solution is smeared.
+   Note that the most relevant way to examine this phenomenon is by analyzing a square domain.
+   
+   \item \textit{phi\_plane.dat}: This file contains two columns. The first is the value of the scalar \textit{phi} ($\phi$) at the
+   cell center associated with the coordinate in the second column. The second column contains the $y$ location of cell centers along
+   a plane in the $y$-direction running from South to North. This $x$ location of this plane is in approximately the middle of the 
+   $x$ axis.
+\end{enumerate}
 
 
 \section{Governing Equations}
@@ -52,7 +200,7 @@ The second governing equation is the continuity equation (conservation of moment
 \end{equation}
 
 \section{Derivation of FVM Coefficents}
-The discretization of the governing equation follows the method of Versteeg \& Malalasekera. First, we expand the convection-diffusion equation (\ref{eqn:c-d}) for two dimensions.
+The discretization of the governing equation follows the method of Versteeg \& Malalasekera \cite{introcfdfvm}. First, we expand the convection-diffusion equation (\ref{eqn:c-d}) for two dimensions.
 
 \begin{equation}
    \dby{\rho u \phi}{x} + \dby{\rho v \phi}{y} = \dby{}{x} \lp \Gamma \dby{\phi}{x} \rp + \dby{}{y} \lp \Gamma \dby{\phi}{y} \rp + S
@@ -64,13 +212,13 @@ Next, integrate the governing equation over a discrete control volume.
    \intb{CV} \dby{\rho u \phi}{x}\,dV + \intb{CV} \dby{\rho v \phi}{y}\,dV =\intb{CV} \dby{}{x} \lp \Gamma \dby{\phi}{x} \rp\,dV + \intb{CV} \dby{}{y} \lp \Gamma \dby{\phi}{y} \rp\,dV + \intb{CV} S\,dV
 \end{equation}
 
-We apply Gauss's divergence theorem to convert the volume integrals to surface (area) integrals. The application of this theorem converts the integral of the divergence of a vector in a given volume to the integral of the vectors normal to infinitesimal surface area elements $dA$. 
+We apply Gauss's divergence theorem to convert the volume integrals to surface (area) integrals. The application of this theorem converts the integral of the divergence of a vector in a given volume to the integral of the dot product of the vector normal to infinitesimal surface area elements $dA$ and the infinitesimal surface area element. 
 
 \begin{equation}
     \intb{A} \rho u \phi\,dA + \intb{A} \rho v \phi\,dA = \intb{A} \Gamma \dby{\phi}{x}\,dA + \intb{A} \Gamma \dby{\phi}{y}\,dA
 \end{equation}
 
-Since the domain is 2D and the grid is Cartesian, the surface elements are cell faces with area $\Delta y$ for $x$-components of the vector quantity and $\Delta y$ for $y$-components of the vector quantity. Computing the surface integrals from above yields the following discrete form for each cell.
+Since the domain is 2D and the grid is Cartesian, the surface elements are cell faces with area $\Delta y$ for $x$-components of the vector quantity and $\Delta x$ for $y$-components of the vector quantity. Computing the surface integrals from above yields the following discrete form for each cell.
 
 \begin{multline*}
    \lp \rho u \phi A \rp_e - \lp \rho u \phi A \rp_w +
@@ -78,13 +226,13 @@ Since the domain is 2D and the grid is Cartesian, the surface elements are cell 
    \lp \Gamma A \dby{\phi}{x} \rp_e - \lp \Gamma A \dby{\phi}{x} \rp_w + \lp \Gamma A \dby{\phi}{y} \rp_n - \lp \Gamma A \dby{\phi}{y} \rp_s
 \end{multline*}
 
-Note that the diffusion terms contain the gradient of the scalar $\phi$ at each cell face. We evaluate this gradient via a linear interpolation. For example, at the \textbf{East} face:
+Note that the diffusion terms contain the gradient of the scalar $\phi$ at each cell face. We evaluate this gradient via a central difference approximation. For example, at the \textbf{East} face:
 
 \begin{equation}
    \lp \Gamma \dby{\phi}{x} \rp_e = \Gamma_e \frac{\phi_E - \phi_P}{\Delta x}
 \end{equation}
 
-For convenience, we can define two new variables $F$ and $D$ to represent convective mass flux per unit area and diffusion conductance at the cell faces [V\&M]. Table \ref{tab:fdabbrev} below summarizes these new variables.
+For convenience, we can define two new variables $F$ and $D$ to represent convective mass flux per unit area and diffusion conductance at the cell faces \cite{introcfdfvm}. Table \ref{tab:fdabbrev} below summarizes these new variables.
 
 \begin{table}[!ht]
 \centering
@@ -161,17 +309,20 @@ $\begin{array}{|l|ccl|} \hline
 The previous section detailed the procedure for calculating FVM coefficients for cells in the interior of the domain. At boundaries, however, we must use a different procedure to account for the influence of the physical conditions at the boundary. The only available boundary condition is \textbf{Dirichlet}. That is, you may specify a fixed value of the transported scalar $\phi$ at each boundary wall. 
 
 \section{Data Structure}
-This implementation makes heavy use of the C language structures of arrays, \verb|structs|, and combinations of the two. In general, the code stores information associated with cells in 1D arrays or 1D arrays of \texttt{structs}. While a 2D array is more intuitive (since it reflects the physical domain more clearly), a 1D array is a more efficient use of memory and allows efficient use of iterative solvers.
+This implementation makes heavy use of the C-language data structure \verb|structs| and arrays of these structures. In general, the code stores information associated with cells in 1D arrays or 1D arrays of \texttt{structs}. While a 2D array is more intuitive (since it reflects the physical domain more clearly), a 1D array is a more efficient use of memory and allows efficient use of iterative solvers.
 
 This storage scheme requires us to convert between $(i,\,j)$ indices and the single index representing a cell in the computer memory (usually \texttt{ii} in the code).
 
 \begin{table}[!ht]
 \caption{Discrete Equation Coefficients}
 \centering
-\begin{tabular}{l|l|c|c} 
-   Cell Location & Notation & Storage Index           & C Code Index\footnotemark \\\hline
-   $(i,\,j)$     & P        & $l = ny\lp i-1 \rp + j$ & $l - 1$ \\ \hline
-   $(i-1,\,j)$   & W        & 1 & 1
+\begin{tabular}{l|c|c|c} \hline
+   Cell Location & Notation & Storage Index           & C Code Index\footnotemark \\ \hline
+   $(i,\,j)$     & P        & $l = ny\lp i-1 \rp + j$ & $l - 1$ \\
+   $(i-1,\,j)$   & W        & $l = $ & 1 \\
+   $(i+1,\,j)$   & E        &   & \\
+   $(i,\,j-1)$   & S        &   & \\
+   $(i,\,j+1)$   & N        &   & \\
 \end{tabular}
 \label{tab:idx_conv}
 \end{table}
@@ -179,8 +330,8 @@ This storage scheme requires us to convert between $(i,\,j)$ indices and the sin
 \footnotetext{In the C programming language, arrays start with index 0.}
 
 \begin{itemize}
-    \item[\textbf{Grid:}] \texttt{struct block}\\ This structure contains geometry information and boundary conditions.
-    \item[\textbf{FVM Coefficients:}] \texttt{struct coeff}\\ This structure contains the finite volume coefficients for a given cell.
+    \item \textbf{Grid:} \texttt{struct block}\\ This structure contains geometry information and boundary conditions.
+    \item \textbf{FVM Coefficients:} \texttt{struct coeff}\\ This structure contains the finite volume coefficients for a given cell.
     
 \end{itemize}
 
@@ -189,7 +340,7 @@ This storage scheme requires us to convert between $(i,\,j)$ indices and the sin
 
 To calculate a converged solution, this code employs one \textbf{outer} loop. The decision to continue the outer loop depends on the residual from iteration to iteration. When this residual falls below the specified tolerance value, we consider the solution converged and terminate the loop. 
 
-Within the outer loop, the code performs Jacobi iteration to solve the linear system $A\phi = b$ and calculates the residual to determine convergence. To calculate the residual, the code uses the global residual method described in Versteeg \& Malalasekera.
+Within the outer loop, the code performs Gauss-Seidel iteration to solve the linear system $A\phi = b$ and calculates the residual to determine convergence. To calculate the residual, the code uses the global residual method described in Versteeg \& Malalasekera \cite{introcfdfvm}.
 
 \subsection{Solution of the Linear System}
 Within each iteration of the outer loop, the code solves the linear system via Gauss-Seidel iteration. This method calculates the value of $\phi$ for a cell as a function of the finite volume coefficients (that make up the matrix $\mathbf{A}$) and the most recent values of $\phi$. 
@@ -204,6 +355,15 @@ Within each iteration of the outer loop, the code solves the linear system via G
     \phi_i^{\lp k \rp}
 \end{equation}
 
+\subsubsection{Deferred Correction Procedure for Higher-Order Discretization}
+When solving the governing equations with pure convection and the FOU scheme for the convective term (\textit{spatial\_scheme} = 0), the equation to solve is very simple and quickly solved without iteration. When the code uses the CDS scheme (\textit{spatial\_scheme} = 1), the value of the central coefficient $a_P$ is zero and the matrix $A$ loses diagonal dominance \cite{fer_per}. 
+This artifact prevents convergence.
+To address this problem, the code employs a deffered correction approach.
+When you activate the CDS scheme, the code uses the FOU scheme for the unknowns at the current iteration. 
+Then, the code modifies the source $S_U$ by adding the difference between the CDS and UDS schemes from the \textbf{previous} iteration.
+Therefore, the correction is \textit{deferred} by one iteration.
+
+At the implementation level, the code replaces each face value with the unknown face value (via FOU) plus the difference between the deferred higher- and lower-order schemes. 
 
 \subsection{Residual Calculation}
 
@@ -227,6 +387,10 @@ The normalization factor that the code employs is the absolute value of the cent
 
 \subsection{Pressure-Velocity Coupling}
 For this implementation, we assume that the velocity field is known \textit{a priori}. Therefore, we store velocities, density, and the advected/diffused scalar $\phi$ at the cell center and avoid specific treatments of pressure-velocity coupling.
+\medskip
+
+\bibliographystyle{unsrt}
+\bibliography{2dconvdif}
 
 
 \end{document}
