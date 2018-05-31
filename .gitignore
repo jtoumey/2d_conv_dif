@@ -19,3 +19,5 @@
 *.dat
 *.png
 *.txt
+
+.DS_Store
